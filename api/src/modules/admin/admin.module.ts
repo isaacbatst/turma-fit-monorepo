@@ -1,25 +1,11 @@
 import { Module } from '@nestjs/common';
-import {
-  ADMIN_REPOSITORY,
-  ADMIN_SESSION_REPOSITORY,
-} from '../../constants/tokens';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
-import { AdminRepositoryMemory } from './repositories/admin.repository.memory';
-import { AdminSessionRepositoryMemory } from './repositories/admin.session.repository.memory';
+import { DatasourceModule } from '../core/DataSource/datasource.module';
 
 @Module({
+  imports: [DatasourceModule],
   controllers: [AdminController],
-  providers: [
-    AdminService,
-    {
-      provide: ADMIN_REPOSITORY,
-      useClass: AdminRepositoryMemory,
-    },
-    {
-      provide: ADMIN_SESSION_REPOSITORY,
-      useClass: AdminSessionRepositoryMemory,
-    },
-  ],
+  providers: [AdminService],
 })
 export class AdminModule {}

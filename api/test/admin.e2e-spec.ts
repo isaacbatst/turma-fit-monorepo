@@ -2,9 +2,13 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
+import { resetDatabase } from './utils/resetDatabase';
+import { PRISMA_SERVICE } from '../src/constants/tokens';
 
 describe('AdminController (e2e)', () => {
   let app: INestApplication;
+  let prisma: PrismaService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -14,6 +18,12 @@ describe('AdminController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
+    prisma = app.get(PRISMA_SERVICE);
+    resetDatabase(prisma);
+  });
+
+  afterAll(() => {
+    resetDatabase(prisma);
   });
 
   describe('/admin (POST)', () => {

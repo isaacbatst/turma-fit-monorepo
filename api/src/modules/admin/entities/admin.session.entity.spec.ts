@@ -6,6 +6,7 @@ describe('AdminSession', () => {
       createdAt: new Date('2020-01-01'),
       expiresIn: 1000,
       token: 'token',
+      userId: 'userId',
     });
 
     expect(adminSession.getToken()).toBe('token');
@@ -18,6 +19,7 @@ describe('AdminSession', () => {
       createdAt: new Date('2020-01-01'),
       expiresIn: 1000,
       token: 'token',
+      userId: 'userId',
     });
 
     expect(adminSession.isExpired(new Date('2020-01-02'))).toBeTruthy();
@@ -29,6 +31,7 @@ describe('AdminSession', () => {
       createdAt: new Date('2020-01-01'),
       expiresIn: twoDays,
       token: 'token',
+      userId: 'userId',
     });
 
     expect(adminSession.isExpired(new Date('2020-01-03'))).toBeFalsy();

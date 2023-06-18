@@ -4,12 +4,14 @@ import {
   ID_GENERATOR,
   TOKEN_GENERATOR,
 } from '../../constants/tokens';
+import { DatasourceModule } from './DataSource/datasource.module';
 import { EncrypterArgon2 } from './Encrypter/EncrypterArgon2';
 import { IdGeneratorFake } from './IdGenerator/IdGeneratorFake';
 import { TokenGeneratorFake } from './TokenGenerator/TokenGeneratorFake';
 
 @Global()
 @Module({
+  imports: [DatasourceModule],
   providers: [
     {
       provide: ENCRYPTER,
@@ -24,6 +26,6 @@ import { TokenGeneratorFake } from './TokenGenerator/TokenGeneratorFake';
       useClass: TokenGeneratorFake,
     },
   ],
-  exports: [ENCRYPTER, ID_GENERATOR, TOKEN_GENERATOR],
+  exports: [DatasourceModule, ENCRYPTER, ID_GENERATOR, TOKEN_GENERATOR],
 })
 export class CoreModule {}

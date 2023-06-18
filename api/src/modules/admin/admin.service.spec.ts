@@ -1,7 +1,5 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AdminService } from './admin.service';
-import { AdminRepository } from './repositories/admin.repository';
-import { AdminRepositoryMemory } from './repositories/admin.repository.memory';
 import {
   ADMIN_REPOSITORY,
   ADMIN_SESSION_REPOSITORY,
@@ -9,10 +7,11 @@ import {
   ID_GENERATOR,
   TOKEN_GENERATOR,
 } from '../../constants/tokens';
-import { IdGeneratorFake } from '../core/IdGenerator/IdGeneratorFake';
 import { EncrypterFake } from '../core/Encrypter/EncrypterFake';
-import { UnauthorizedException } from '@nestjs/common';
+import { IdGeneratorFake } from '../core/IdGenerator/IdGeneratorFake';
 import { TokenGeneratorFake } from '../core/TokenGenerator/TokenGeneratorFake';
+import { AdminService } from './admin.service';
+import { AdminRepositoryMemory } from './repositories/admin.repository.memory';
 import { AdminSessionRepositoryMemory } from './repositories/admin.session.repository.memory';
 
 describe('AdminService', () => {

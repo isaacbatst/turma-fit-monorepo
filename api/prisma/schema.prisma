@@ -9,3 +9,19 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Admin {
+  id       String         @id @default(uuid())
+  email    String         @unique
+  name     String
+  password String
+  sessions AdminSession[]
+}
+
+model AdminSession {
+  token     String   @id
+  createdAt DateTime
+  expiresIn BigInt
+  user      Admin    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+}

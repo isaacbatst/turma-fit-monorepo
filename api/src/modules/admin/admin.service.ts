@@ -67,6 +67,7 @@ export class AdminService {
       createdAt: new Date(),
       expiresIn: oneWeekMs,
       token,
+      userId: admin.getId(),
     });
     await this.sessionRepository.create(session);
     return {
