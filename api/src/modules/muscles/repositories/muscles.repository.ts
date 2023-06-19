@@ -1,4 +1,4 @@
-import { Muscle } from './entities/muscle.entity';
+import { Muscle } from '../entities/muscle.entity';
 
 export interface MusclesRepository {
   create(muscle: Muscle): Promise<void>;

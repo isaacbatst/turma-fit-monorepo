@@ -13,6 +13,8 @@ import { TokenGeneratorFake } from '../core/TokenGenerator/TokenGeneratorFake';
 import { AdminService } from './admin.service';
 import { AdminRepositoryMemory } from './repositories/admin.repository.memory';
 import { AdminSessionRepositoryMemory } from './repositories/admin.session.repository.memory';
+import { AdminSession } from './entities/admin.session.entity';
+import { Admin } from './entities/admin.entity';
 
 describe('AdminService', () => {
   let service: AdminService;
@@ -23,8 +25,8 @@ describe('AdminService', () => {
   let sessionRepository: AdminSessionRepositoryMemory;
 
   beforeEach(async () => {
-    repository = new AdminRepositoryMemory();
     sessionRepository = new AdminSessionRepositoryMemory();
+    repository = new AdminRepositoryMemory(sessionRepository);
     idGenerator = new IdGeneratorFake();
     encrypter = new EncrypterFake();
     tokenGenerator = new TokenGeneratorFake();
@@ -149,6 +151,58 @@ describe('AdminService', () => {
           password: 'invalid-password',
         });
       }).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('validateSessionToken', () => {
+    it('should return true with valid token', async () => {
+      await sessionRepository.create(
+        new AdminSession({
+          createdAt: new Date(),
+          expiresIn: 1000 * 60,
+          token: 'valid-token',
+          userId: 'fake-id',
+        }),
+      );
+      await repository.create(
+        new Admin({
+          email: 'email@example.com',
+          id: 'fake-id',
+          name: 'admin',
+          password: 'hash',
+        }),
+      );
+      const isValid = await service.validateSessionToken('valid-token');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return false with unexistent token', async () => {
+      const isValid = await service.validateSessionToken('unexistent-token');
+      expect(isValid).toBeFalsy();
+    });
+
+    it('should return false with expired token', async () => {
+      await sessionRepository.create(
+        new AdminSession({
+          createdAt: new Date('2020-01-01T00:00:00.000Z'),
+          expiresIn: 0,
+          token: 'expired-token',
+          userId: 'fake-id',
+        }),
+      );
+      await repository.create(
+        new Admin({
+          email: 'email@example.com',
+          id: 'fake-id',
+          name: 'admin',
+          password: 'hash',
+        }),
+      );
+      const isValid = await service.validateSessionToken(
+        'expired-token',
+        new Date('2020-01-02T00:00:00.000Z'),
+      );
+      expect(isValid).toBeFalsy();
     });
   });
 });

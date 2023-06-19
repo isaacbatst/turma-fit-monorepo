@@ -6,6 +6,13 @@ import { PRISMA_SERVICE } from '../../../constants/tokens';
 
 export class AdminSessionRepositoryPrisma implements AdminSessionRepository {
   constructor(@Inject(PRISMA_SERVICE) private prisma: PrismaService) {}
+  async findByToken(token: string): Promise<AdminSession | null> {
+    const adminSession = await this.prisma.adminSession.findUnique({
+      where: { token },
+    });
+
+    return adminSession ? new AdminSession(adminSession) : null;
+  }
 
   async create(session: AdminSession): Promise<void> {
     await this.prisma.adminSession.create({

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ID_GENERATOR, MUSCLE_REPOSITORY } from '../../constants/tokens';
 import { IdGeneratorFake } from '../core/IdGenerator/IdGeneratorFake';
-import { MusclesRepositoryMemory } from './muscles.repository.memory';
+import { MusclesRepositoryMemory } from './repositories/muscles.repository.memory';
 import { MusclesService } from './muscles.service';
 
 describe('MusclesService', () => {

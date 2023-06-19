@@ -1,4 +1,4 @@
-import { Muscle } from './entities/muscle.entity';
+import { Muscle } from '../entities/muscle.entity';
 import { MusclesRepository } from './muscles.repository';
 
 export class MusclesRepositoryMemory implements MusclesRepository {

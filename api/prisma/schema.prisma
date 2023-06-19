@@ -21,7 +21,12 @@ model Admin {
 model AdminSession {
   token     String   @id
   createdAt DateTime
-  expiresIn BigInt
+  expiresIn Int
   user      Admin    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
+}
+
+model Muscle {
+  id   String @id @default(uuid())
+  name String @unique
 }

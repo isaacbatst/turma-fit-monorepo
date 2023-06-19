@@ -5,7 +5,7 @@ import { CreateMuscleDto } from './dto/create-muscle.dto';
 import { ReadMuscleDto } from './dto/read-muscle.dto';
 import { UpdateMuscleDto } from './dto/update-muscle.dto';
 import { Muscle } from './entities/muscle.entity';
-import { MusclesRepository } from './muscles.repository';
+import { MusclesRepository } from './repositories/muscles.repository';
 
 @Injectable()
 export class MusclesService {

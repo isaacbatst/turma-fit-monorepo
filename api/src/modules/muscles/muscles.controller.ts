@@ -10,11 +10,14 @@ import {
 import { MusclesService } from './muscles.service';
 import { CreateMuscleDto } from './dto/create-muscle.dto';
 import { UpdateMuscleDto } from './dto/update-muscle.dto';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../auth/roles.enum';
 
 @Controller('muscles')
 export class MusclesController {
   constructor(private readonly musclesService: MusclesService) {}
 
+  @Roles(Role.admin)
   @Post()
   create(@Body() createMuscleDto: CreateMuscleDto) {
     return this.musclesService.create(createMuscleDto);

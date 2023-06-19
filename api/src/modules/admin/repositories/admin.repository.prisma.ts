@@ -24,7 +24,6 @@ export class AdminRepositoryPrisma implements AdminRepository {
       },
     });
 
-    if (!admin) return null;
-    return new Admin(admin);
+    return admin ? new Admin(admin) : null;
   }
 }
