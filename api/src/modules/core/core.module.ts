@@ -6,8 +6,8 @@ import {
 } from '../../constants/tokens';
 import { DatasourceModule } from './DataSource/datasource.module';
 import { EncrypterArgon2 } from './Encrypter/EncrypterArgon2';
-import { IdGeneratorFake } from './IdGenerator/IdGeneratorFake';
-import { TokenGeneratorFake } from './TokenGenerator/TokenGeneratorFake';
+import { IdGeneratorCrypto } from './IdGenerator/IdGeneratorCrypto';
+import { TokenGeneratorCrypto } from './TokenGenerator/TokenGeneratorCrypto';
 
 @Global()
 @Module({
@@ -19,11 +19,11 @@ import { TokenGeneratorFake } from './TokenGenerator/TokenGeneratorFake';
     },
     {
       provide: ID_GENERATOR,
-      useClass: IdGeneratorFake,
+      useClass: IdGeneratorCrypto,
     },
     {
       provide: TOKEN_GENERATOR,
-      useClass: TokenGeneratorFake,
+      useClass: TokenGeneratorCrypto,
     },
   ],
   exports: [DatasourceModule, ENCRYPTER, ID_GENERATOR, TOKEN_GENERATOR],
