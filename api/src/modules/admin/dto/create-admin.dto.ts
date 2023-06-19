@@ -6,17 +6,17 @@ import {
 } from 'class-validator';
 
 export class CreateAdminDto {
-  @IsNotEmpty({ message: 'O campo nome é obrigatório' })
-  @IsString({ message: 'O campo nome deve ser uma string' })
+  @IsNotEmpty({ message: 'REQUIRED_NAME' })
+  @IsString({ message: 'INVALID_NAME' })
   name: string;
 
-  @IsNotEmpty({ message: 'O campo e-mail é obrigatório' })
-  @IsString({ message: 'O campo e-mail deve ser uma string' })
-  @IsEmail({}, { message: 'E-mail inválido' })
+  @IsNotEmpty({ message: 'REQUIRED_EMAIL' })
+  @IsString({ message: 'INVALID_EMAIL' })
+  @IsEmail({}, { message: 'INVALID_EMAIL' })
   email: string;
 
-  @IsNotEmpty({ message: 'O campo senha é obrigatório' })
-  @IsString({ message: 'O campo senha deve ser uma string' })
-  @IsStrongPassword({}, { message: 'A senha deve ser forte' })
+  @IsNotEmpty({ message: 'REQUIRED_PASSWORD' })
+  @IsString({ message: 'INVALID_PASSWORD' })
+  @IsStrongPassword({}, { message: 'WEAK_PASSWORD' })
   password: string;
 }

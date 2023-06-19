@@ -1,12 +1,12 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginAdminDto {
-  @IsNotEmpty({ message: 'O campo e-mail é obrigatório' })
-  @IsString({ message: 'O campo e-mail deve ser uma string' })
-  @IsEmail({}, { message: 'E-mail inválido' })
+  @IsNotEmpty({ message: 'REQUIRED_EMAIL' })
+  @IsString({ message: 'INVALID_EMAIL' })
+  @IsEmail({}, { message: 'INVALID_EMAIL' })
   email: string;
 
-  @IsNotEmpty({ message: 'O campo senha é obrigatório' })
-  @IsString({ message: 'O campo senha deve ser uma string' })
+  @IsNotEmpty({ message: 'REQUIRED_PASSWORD' })
+  @IsString({ message: 'INVALID_PASSWORD' })
   password: string;
 }

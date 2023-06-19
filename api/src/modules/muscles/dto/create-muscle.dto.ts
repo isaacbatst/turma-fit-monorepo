@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateMuscleDto {
-  @IsNotEmpty({ message: 'O campo nome é obrigatório' })
+  @IsNotEmpty({ message: 'REQUIRED_NAME' })
   name: string;
 }

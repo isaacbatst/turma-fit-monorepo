@@ -42,7 +42,7 @@ describe('MusclesController (e2e)', () => {
       .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toContain('O campo nome é obrigatório');
+    expect(response.body.message).toContain('REQUIRED_NAME');
   });
 
   it('/muscles (POST) returns 201', async () => {
