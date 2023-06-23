@@ -8,3 +8,28 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+  api:
+    build: ./api
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+      - /app/dist
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+  dashboard:
+    build:
+      context: ./dashboard
+      target: dev
+    depends_on:
+      - api
+    ports:
+      - 3001:3000
+    volumes:
+      - ./dashboard:/app
+      - /app/node_modules
