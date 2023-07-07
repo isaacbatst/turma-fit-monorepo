@@ -27,7 +27,7 @@ export class AdminService {
     @Inject(ID_GENERATOR) private readonly idGenerator: IdGenerator,
     @Inject(ADMIN_REPOSITORY) private readonly repository: AdminRepository,
     @Inject(ADMIN_SESSION_REPOSITORY)
-    private readonly sessionRepository: AdminSessionRepository,
+    private readonly adminSessionRepository: AdminSessionRepository,
     @Inject(ENCRYPTER) private readonly encrypter: Encrypter,
     @Inject(TOKEN_GENERATOR) private readonly tokenGenerator: TokenGenerator,
   ) {}
@@ -69,10 +69,17 @@ export class AdminService {
       token,
       userId: admin.getId(),
     });
-    await this.sessionRepository.create(session);
+    await this.adminSessionRepository.create(session);
     return {
       token,
     };
+  }
+
+  async logout(token: string) {
+    const session = await this.adminSessionRepository.findByToken(token);
+    if (!session) throw new NotFoundException();
+    session.logout(new Date());
+    await this.adminSessionRepository.logout(session);
   }
 
   findAll() {
