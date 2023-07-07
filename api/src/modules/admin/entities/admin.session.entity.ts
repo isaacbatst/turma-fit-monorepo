@@ -8,6 +8,7 @@ type AdminSessionParams = {
 export class AdminSession {
   private createdAt: Date;
   private expiresIn: number;
+  private loggedOutAt?: Date;
   private token: string;
   private userId: string;
 
@@ -18,9 +19,25 @@ export class AdminSession {
     this.userId = params.userId;
   }
 
+  isValid(when: Date): boolean {
+    return !this.isExpired(when) && !this.isLoggedOut();
+  }
+
   isExpired(when: Date): boolean {
     const expiresAt = this.createdAt.getTime() + this.expiresIn;
     return when.getTime() > expiresAt;
+  }
+
+  logout(when: Date): void {
+    this.loggedOutAt = when;
+  }
+
+  isLoggedOut(): boolean {
+    return !!this.loggedOutAt;
+  }
+
+  getLoggedOutAt(): Date | undefined {
+    return this.loggedOutAt;
   }
 
   getCreatedAt(): Date {
