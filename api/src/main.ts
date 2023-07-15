@@ -4,7 +4,12 @@ import { AppModule } from './app.module';
 import { PRISMA_SERVICE } from './constants/tokens';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: process.env.DASHBOARD_URL,
+      credentials: true,
+    },
+  });
   app.useGlobalPipes(new ValidationPipe());
   const prismaService = app.get(PRISMA_SERVICE);
   await prismaService.enableShutdownHooks(app);

@@ -19,11 +19,12 @@ model Admin {
 }
 
 model AdminSession {
-  token     String   @id
-  createdAt DateTime
-  expiresIn Int
-  user      Admin    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    String
+  token       String    @id
+  createdAt   DateTime
+  loggedOutAt DateTime?
+  expiresIn   Int
+  user        Admin     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId      String
 }
 
 model Muscle {

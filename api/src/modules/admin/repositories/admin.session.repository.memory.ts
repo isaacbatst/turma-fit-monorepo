@@ -11,4 +11,12 @@ export class AdminSessionRepositoryMemory implements AdminSessionRepository {
   async findByToken(token: string): Promise<AdminSession | null> {
     return this.items.find((item) => item.getToken() === token) ?? null;
   }
+
+  async logout(adminSession: AdminSession): Promise<void> {
+    const index = this.items.findIndex(
+      (item) => item.getToken() === adminSession.getToken(),
+    );
+    if (index < 0) return;
+    this.items[index] = adminSession;
+  }
 }

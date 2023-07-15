@@ -6,6 +6,12 @@ import { PRISMA_SERVICE } from '../../../constants/tokens';
 
 export class AdminSessionRepositoryPrisma implements AdminSessionRepository {
   constructor(@Inject(PRISMA_SERVICE) private prisma: PrismaService) {}
+  async logout(adminSession: AdminSession): Promise<void> {
+    await this.prisma.adminSession.update({
+      where: { token: adminSession.getToken() },
+      data: { loggedOutAt: adminSession.getLoggedOutAt() },
+    });
+  }
   async findByToken(token: string): Promise<AdminSession | null> {
     const adminSession = await this.prisma.adminSession.findUnique({
       where: { token },

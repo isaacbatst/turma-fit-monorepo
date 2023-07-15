@@ -21,11 +21,10 @@ describe('MusclesController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
     prisma = app.get(PRISMA_SERVICE);
-    await resetDatabase(prisma);
     token = await loginAdmin(app);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await resetDatabase(prisma);
   });
 

@@ -20,10 +20,9 @@ describe('AdminController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
     prisma = app.get(PRISMA_SERVICE);
-    await resetDatabase(prisma);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await resetDatabase(prisma);
   });
 
