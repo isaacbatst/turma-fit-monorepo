@@ -1,20 +1,18 @@
-import LoginForm from "./components/LoginForm";
+import AppHeader from "./components/AppHeader";
+import DashBody from "./components/DashBody";
+import Sidebar from "./components/Sidebar";
 
-export default function Home() {
+export default function Dashboard() {
   return (
-    <main className="bg-white text-stone-950">
-      <div className="min-h-screen flex flex-col">
-        <div
-          className="py-10 
-          shadow-lg gap-5 bg-white
-          flex-1
-          w-full px-5 
-          flex items-center justify-center
-          "
-        >
-          <LoginForm />
-        </div>
-      </div>
+    <main className="bg-stone-950 min-h-screen flex flex-col">
+      <AppHeader />
+      <section className="flex flex-1">
+        <Sidebar />
+        <DashBody>
+          <h2 className='font-semibold text-xl mb-5'>Bem vindo, Administrador!</h2>
+          <p>Use o menu lateral para começar a brincadeira.</p>
+        </DashBody>
+      </section>
     </main>
-  )
+  );
 }

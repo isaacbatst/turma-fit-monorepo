@@ -3,7 +3,6 @@ version: '3.1'
 services:
   db:
     image: postgres:15.3-alpine
-    restart: always
     ports:
       - 5432:5432
     environment:
@@ -17,11 +16,11 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./api:/app
       - /app/node_modules
-      - /app/dist
+      - ./api:/app
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      DASHBOARD_URL: ${DASHBOARD_URL}
   dashboard:
     build:
       context: ./dashboard
@@ -31,5 +30,6 @@ services:
     ports:
       - 3001:3000
     volumes:
-      - ./dashboard:/app
+      - /app/.next
       - /app/node_modules
+      - ./dashboard:/app
