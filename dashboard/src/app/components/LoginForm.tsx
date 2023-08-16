@@ -8,8 +8,6 @@ const LoginForm = () => {
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     try {
       e.preventDefault()
-      // const r = await fetch('http://localhost:3000/admin/login')
-      // console.log(r)
       const response = await fetch('/api/login', {
         cache: 'no-store',
         method: 'POST',

@@ -12,10 +12,11 @@
 import { cookies } from "next/dist/client/components/headers";
 import { redirect } from 'next/navigation';
 import { AUTH_TOKEN_COOKIE } from "../../../constants/cookies";
+import { API_GATEWAY_URL } from "../../../constants/gateways";
 import CreateMuscleForm from "./CreateMuscleForm";
 
 const fetchMuscles = async (token: string) => {
-  const response = await fetch('http://api:3000/muscles', {
+  const response = await fetch(`${API_GATEWAY_URL}/muscles`, {
     headers: { authorization: `Bearer ${token}` }
   });
 

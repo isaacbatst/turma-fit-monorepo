@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { AUTH_TOKEN_COOKIE } from "../../../constants/cookies";
+import { API_GATEWAY_URL } from "../../../constants/gateways";
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    const response = await fetch('http://api:5555/admin/login', {
+    const response = await fetch(`${API_GATEWAY_URL}/admin/login`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ email, password }),
