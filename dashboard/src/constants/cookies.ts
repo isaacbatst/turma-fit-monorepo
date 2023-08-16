@@ -1,1 +1,1 @@
-export const AUTH_COOKIE_NAME = 'turmafit_dashboard_token'
+export const AUTH_TOKEN_COOKIE = 'turmafit_dashboard_token'
