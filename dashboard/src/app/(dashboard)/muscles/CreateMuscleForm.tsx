@@ -2,9 +2,6 @@
 import React from 'react';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-type Props = {}
-
-
 const postMuscle = async (name: string) => {
   await fetch('/api/muscles', {
     method: 'POST',
@@ -13,7 +10,7 @@ const postMuscle = async (name: string) => {
 
 }
 
-const CreateMuscleForm = (props: Props) => {
+const CreateMuscleForm = () => {
   const ref = React.useRef<HTMLInputElement>(null)
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
