@@ -28,6 +28,10 @@ const fetchMuscles = async (token: string) => {
   return data;
 }
 
+type Muscle = {
+  id: string;
+  name: string;
+}
 
 
 export default async function Muscles() {
@@ -37,7 +41,7 @@ export default async function Muscles() {
     redirect('/login')
   }
 
-  const muscles = await fetchMuscles(tokenCookie.value);
+  const muscles = await fetchMuscles(tokenCookie.value) as Muscle[];
   return (
     <section>
       <h2 className="text-center font-semibold mb-10">Músculos cadastrados</h2>
