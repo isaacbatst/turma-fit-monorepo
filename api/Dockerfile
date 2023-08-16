@@ -5,5 +5,6 @@ RUN yarn --frozen-lockfile
 COPY ./prisma ./prisma
 RUN yarn prisma generate
 COPY . .
-CMD ["yarn", "start:dev"]
+ENTRYPOINT ["yarn"]
+CMD ["start:dev"]
 EXPOSE 3000
