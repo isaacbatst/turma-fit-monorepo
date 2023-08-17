@@ -53,6 +53,22 @@ describe('MusclesController (e2e)', () => {
     expect(response.status).toBe(201);
   });
 
+  it('/muscles (POST) returns 409 with repeated name', async () => {
+    const response1 = await request(app.getHttpServer())
+      .post('/muscles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'biceps' });
+
+    expect(response1.status).toBe(201);
+
+    const response2 = await request(app.getHttpServer())
+      .post('/muscles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'biceps' });
+    console.log(response2.status, response2.body);
+    expect(response2.status).toBe(409);
+  });
+
   it('/muscles (GET) empty list', async () => {
     await request(app.getHttpServer())
       .get('/muscles')
