@@ -13,9 +13,9 @@ import { cookies } from "next/dist/client/components/headers";
 import { redirect } from 'next/navigation';
 import { AUTH_TOKEN_COOKIE } from "../../../constants/cookies";
 import { SWRProvider } from "../../components/swr-provider";
-import CreateMuscleForm from "./CreateMuscleForm";
-import MusclesList from "./MusclesList";
+import MusclesSection from "./MusclesSection";
 import { fetchMusclesFromBackend } from "./fetchMusclesFromBackend";
+import { ToastContainer } from "react-toastify";
 
 export default async function Muscles() {
   const cookie = cookies().get(AUTH_TOKEN_COOKIE)
@@ -32,14 +32,8 @@ export default async function Muscles() {
         muscles
       }}
     >
-      <section>
-        <h2 className="text-center text-3xl font-semibold mb-10">Músculos</h2>
-        <ul className="flex flex-wrap gap-3 my-10">
-          <CreateMuscleForm />
-          <MusclesList muscles={muscles} token={cookie.value} />
-        </ul>
-      </section>
-
+      <MusclesSection muscles={muscles} token={cookie.value} />
+      <ToastContainer />
     </SWRProvider>
   );
 }
