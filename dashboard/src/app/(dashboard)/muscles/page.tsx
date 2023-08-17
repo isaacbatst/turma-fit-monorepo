@@ -46,15 +46,15 @@ export default async function Muscles() {
     <section>
       <h2 className="text-center font-semibold mb-10">Músculos cadastrados</h2>
       <CreateMuscleForm />
-      <ul className="flex flex-wrap gap-3">
+      <ul className="flex flex-wrap gap-3 my-10">
         {muscles.map(muscle => (
           <li
-            className="flex gap-10 items-center bg-stone-900 text-white px-5 py-3 rounded-2xl" 
+            className="flex gap-10 items-center bg-stone-950 text-white px-5 py-3 rounded-2xl" 
             key={muscle.id}>
-            <p>{muscle.name}</p>
+            <p className="text-lg">{muscle.name}</p>
             <div className="flex gap-3">
-              <button className="bg-stone-800 text-white px-3 py-1 rounded-md">Editar</button>
-              <button className="bg-stone-800 text-white px-3 py-1 rounded-md">Excluir</button>
+              <button type="button" className="bg-stone-800 text-white px-3 py-1 rounded-md hover:scale-105 active:opacity-80">Editar</button>
+              <button type="button" className="bg-stone-800 text-white px-3 py-1 rounded-md hover:scale-105 active:opacity-80">Excluir</button>
             </div>
           </li>
         ))}

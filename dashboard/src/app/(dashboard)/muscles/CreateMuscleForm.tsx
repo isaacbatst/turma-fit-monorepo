@@ -15,7 +15,6 @@ const CreateMuscleForm = () => {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('event')
     const name = ref.current?.value ?? ''
     await postMuscle(name)
   }
