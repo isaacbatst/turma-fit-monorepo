@@ -12,53 +12,34 @@
 import { cookies } from "next/dist/client/components/headers";
 import { redirect } from 'next/navigation';
 import { AUTH_TOKEN_COOKIE } from "../../../constants/cookies";
-import { API_GATEWAY_URL } from "../../../constants/gateways";
+import { SWRProvider } from "../../components/swr-provider";
 import CreateMuscleForm from "./CreateMuscleForm";
-
-const fetchMuscles = async (token: string) => {
-  const response = await fetch(`${API_GATEWAY_URL}/muscles`, {
-    headers: { authorization: `Bearer ${token}` }
-  });
-
-  if (response.status >= 400) {
-    return []
-  }
-
-  const data = await response.json();
-  return data;
-}
-
-type Muscle = {
-  id: string;
-  name: string;
-}
-
+import MusclesList from "./MusclesList";
+import { fetchMusclesFromBackend } from "./fetchMusclesFromBackend";
 
 export default async function Muscles() {
-  const tokenCookie = cookies().get(AUTH_TOKEN_COOKIE)
+  const cookie = cookies().get(AUTH_TOKEN_COOKIE)
 
-  if(!tokenCookie) {
+  if(!cookie) {
     redirect('/login')
   }
 
-  const muscles = await fetchMuscles(tokenCookie.value) as Muscle[];
+  const muscles = await fetchMusclesFromBackend(cookie.value);
+
   return (
-    <section>
-      <h2 className="text-center font-semibold mb-10">Músculos cadastrados</h2>
-      <CreateMuscleForm />
-      <ul className="flex flex-wrap gap-3 my-10">
-        {muscles.map(muscle => (
-          <li
-            className="flex gap-10 items-center bg-stone-950 text-white px-5 py-3 rounded-2xl" 
-            key={muscle.id}>
-            <p className="text-lg">{muscle.name}</p>
-            <div className="flex gap-3">
-              <button type="button" className="bg-stone-800 text-white px-3 py-1 rounded-md hover:scale-105 active:opacity-80">Editar</button>
-              <button type="button" className="bg-stone-800 text-white px-3 py-1 rounded-md hover:scale-105 active:opacity-80">Excluir</button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <SWRProvider 
+      value={{
+        muscles
+      }}
+    >
+      <section>
+        <h2 className="text-center text-3xl font-semibold mb-10">Músculos</h2>
+        <ul className="flex flex-wrap gap-3 my-10">
+          <CreateMuscleForm />
+          <MusclesList muscles={muscles} token={cookie.value} />
+        </ul>
+      </section>
+
+    </SWRProvider>
   );
 }
