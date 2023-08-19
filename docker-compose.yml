@@ -9,10 +9,16 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./db/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   api:
     build: ./api
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - 5555:5555
     volumes:
