@@ -6,9 +6,13 @@ import Loading from '../../components/Loading';
 import { toast } from 'react-toastify';
 
 const postMuscle = async (name: string) => {
-  return fetch('/api/muscles', {
+  return fetch('http://localhost:5555/muscles', {
     method: 'POST',
-    body: JSON.stringify({ name })
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name }),
+    credentials: 'include',
   });
 
 }
@@ -30,14 +34,12 @@ const CreateMuscleForm: React.FC = () => {
         await mutate('muscles')
         return
       }
-
       const errors: Record<number, string> = {
         409: 'Músculo já cadastrado',
         400: 'Nome inválido',
       }
-
       const error = errors[response.status] || 'Erro desconhecido'
-
+      console.log('toast error', error)
       toast.error(error, {
         theme: 'dark',
         position: 'bottom-right',
@@ -52,9 +54,10 @@ const CreateMuscleForm: React.FC = () => {
     onSubmit={onSubmit}
   >
     <input 
-      className="bg-stone-950 font-semibold text-white px-5 py-3 rounded-lg" 
+      className="bg-stone-950 font-semibold text-white px-5 py-3 rounded-lg flex-1" 
       type="text"
       name='name'
+      autoComplete='off'
       value={name}
       onChange={event => setName(event.target.value)}
       placeholder="Adicionar músculo"

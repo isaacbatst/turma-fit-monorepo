@@ -1,17 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { MusclesService } from './muscles.service';
-import { CreateMuscleDto } from './dto/create-muscle.dto';
-import { UpdateMuscleDto } from './dto/update-muscle.dto';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/roles.enum';
+import { UpdateMuscleDto } from './dto/update-muscle.dto';
+import { MusclesService } from './muscles.service';
+import { CreateMuscleDto } from './dto/create-muscle.dto';
 
 @Controller('muscles')
 export class MusclesController {

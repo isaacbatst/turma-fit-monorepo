@@ -4,8 +4,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
 import {
   ADMIN_REPOSITORY,
   ADMIN_SESSION_REPOSITORY,
@@ -13,13 +11,15 @@ import {
   ID_GENERATOR,
   TOKEN_GENERATOR,
 } from '../../constants/tokens';
-import { AdminRepository } from './repositories/admin.repository';
-import { IdGenerator } from '../core/IdGenerator/IdGenerator';
-import { Admin } from './entities/admin.entity';
 import { Encrypter } from '../core/Encrypter/Encrypter';
+import { IdGenerator } from '../core/IdGenerator/IdGenerator';
 import { TokenGenerator } from '../core/TokenGenerator/TokenGenerator';
-import { AdminSessionRepository } from './repositories/admin.session.repository';
+import { CreateAdminDto } from './dto/create-admin.dto';
+import { UpdateAdminDto } from './dto/update-admin.dto';
+import { Admin } from './entities/admin.entity';
 import { AdminSession } from './entities/admin.session.entity';
+import { AdminRepository } from './repositories/admin.repository';
+import { AdminSessionRepository } from './repositories/admin.session.repository';
 
 @Injectable()
 export class AdminService {
@@ -80,6 +80,14 @@ export class AdminService {
     if (!session) throw new NotFoundException();
     session.logout(new Date());
     await this.adminSessionRepository.logout(session);
+  }
+
+  async findMe(token: string) {
+    const session = await this.adminSessionRepository.findByToken(token);
+    if (!session) throw new NotFoundException('Session not found');
+    const admin = await this.repository.findById(session.getUserId());
+    if (!admin) throw new NotFoundException('Admin not found');
+    return admin;
   }
 
   findAll() {

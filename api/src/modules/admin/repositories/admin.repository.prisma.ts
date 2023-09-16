@@ -26,4 +26,14 @@ export class AdminRepositoryPrisma implements AdminRepository {
 
     return admin ? new Admin(admin) : null;
   }
+
+  async findById(id: string): Promise<Admin | null> {
+    const admin = await this.prisma.admin.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    return admin ? new Admin(admin) : null;
+  }
 }

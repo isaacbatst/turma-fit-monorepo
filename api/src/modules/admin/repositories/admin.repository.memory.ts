@@ -14,4 +14,8 @@ export class AdminRepositoryMemory implements AdminRepository {
   async findByEmail(email: string): Promise<Admin | null> {
     return this.items.find((item) => item.getEmail() === email) ?? null;
   }
+
+  async findById(id: string): Promise<Admin | null> {
+    return this.items.find((item) => item.getId() === id) ?? null;
+  }
 }

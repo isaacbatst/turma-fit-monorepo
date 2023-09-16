@@ -8,13 +8,14 @@ const LoginForm = () => {
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     try {
       e.preventDefault()
-      const response = await fetch('/api/login', {
+      const response = await fetch('http://localhost:5555/admin/login', {
         cache: 'no-store',
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
       })
 
       if(response.status === 200) {

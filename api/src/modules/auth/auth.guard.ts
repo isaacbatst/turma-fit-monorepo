@@ -11,6 +11,7 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './roles.decorator';
 import { Role } from './roles.enum';
 import { IS_PUBLIC_KEY } from './public.decorator';
+import { DASHBOARD_AUTH_COOKIE } from '../../constants/cookies';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -60,7 +61,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const cookies = request.cookies;
+    return cookies[DASHBOARD_AUTH_COOKIE];
   }
 }
