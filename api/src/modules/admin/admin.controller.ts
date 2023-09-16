@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   HttpCode,
+  Res,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { LoginAdminDto } from './dto/login-admin.dto';
 import { Public } from '../auth/public.decorator';
+import { Response } from 'express';
+import { DASHBOARD_AUTH_COOKIE } from '../../constants/cookies';
 
 @Controller('admin')
 export class AdminController {
@@ -26,8 +29,14 @@ export class AdminController {
   @Public()
   @HttpCode(200)
   @Post('/login')
-  login(@Body() loginAdminDto: LoginAdminDto) {
-    return this.adminService.login(loginAdminDto);
+  async login(
+    @Body() loginAdminDto: LoginAdminDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { token } = await this.adminService.login(loginAdminDto);
+    res.cookie(DASHBOARD_AUTH_COOKIE, token, {
+      httpOnly: true,
+    });
   }
 
   @Get()

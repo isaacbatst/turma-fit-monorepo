@@ -13,6 +13,8 @@ import { IdGeneratorFake } from '../core/IdGenerator/IdGeneratorFake';
 import { EncrypterFake } from '../core/Encrypter/EncrypterFake';
 import { TokenGeneratorFake } from '../core/TokenGenerator/TokenGeneratorFake';
 import { AdminSessionRepositoryMemory } from './repositories/admin.session.repository.memory';
+import { Response } from 'express';
+import { DASHBOARD_AUTH_COOKIE } from '../../constants/cookies';
 
 describe('AdminController', () => {
   let controller: AdminController;
@@ -69,11 +71,22 @@ describe('AdminController', () => {
       email: 'email@example.com',
     });
 
-    const { token } = await controller.login({
-      email: 'email@example.com',
-      password: 'password',
-    });
+    const res = {
+      cookie: jest.fn(),
+    } as unknown as Response;
 
-    expect(token).toBe('fake-token');
+    await controller.login(
+      {
+        email: 'email@example.com',
+        password: 'password',
+      },
+      res,
+    );
+
+    expect(res.cookie).toHaveBeenCalledWith(
+      DASHBOARD_AUTH_COOKIE,
+      'fake-token',
+      { httpOnly: true },
+    );
   });
 });

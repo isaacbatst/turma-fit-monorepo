@@ -15,11 +15,14 @@ export class MusclesRepositoryPrisma implements MusclesRepository {
           id: muscle.id,
         },
       });
-    } catch(err) {
-      console.log(err instanceof Prisma.PrismaClientKnownRequestError)
-      if(err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-        const repeatedField = (err.meta?.target as string[])[0]
-        const message = `${repeatedField.toUpperCase()}_ALREADY_EXISTS`
+    } catch (err) {
+      console.log(err instanceof Prisma.PrismaClientKnownRequestError);
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        const repeatedField = (err.meta?.target as string[])[0];
+        const message = `${repeatedField.toUpperCase()}_ALREADY_EXISTS`;
         throw new ConflictException({ message });
       }
     }

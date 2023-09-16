@@ -1,11 +1,13 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import * as cookie from 'cookie';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
 import { resetDatabase } from './utils/resetDatabase';
 import { PRISMA_SERVICE } from '../src/constants/tokens';
 import { loginAdmin } from './utils/loginAdmin';
+import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
 
 describe('AdminController (e2e)', () => {
   let app: INestApplication;
@@ -113,9 +115,9 @@ describe('AdminController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/admin/login')
         .send({ email: 'admin@example.com', password: 'senha-FORTE@032' });
-
+      const cookies = cookie.parse(response.header['set-cookie'][0]);
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('token');
+      expect(cookies[DASHBOARD_AUTH_COOKIE]).toBeDefined();
     });
   });
 });
