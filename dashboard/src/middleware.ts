@@ -1,20 +1,42 @@
 import { NextRequest, NextResponse } from "next/server"
 import { AUTH_TOKEN_COOKIE } from "./constants/cookies"
+import { API_GATEWAY_URL } from "./constants/gateways"
 
 export const config = {
   matcher: ['/', '/login']
 }
 
-export function middleware(request: NextRequest) {
-  const cookie = request.cookies.get(AUTH_TOKEN_COOKIE)
+const validateCookie = async (cookie?: string) => {
+  if(!cookie) return false
 
-  if(request.nextUrl.pathname.startsWith('/login') && cookie) {
+  try {
+    const response = await fetch(`${API_GATEWAY_URL}/admin/me`, {
+      credentials: 'include',
+      headers: {
+        cookie: `${AUTH_TOKEN_COOKIE}=${cookie}`
+      }
+    })
+    return response.status === 200
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+
+export async function middleware(request: NextRequest) {
+  const cookie = request.cookies.get(AUTH_TOKEN_COOKIE)
+  console.log('middleware', cookie)
+
+  const isValidCookie = await validateCookie(cookie?.value)
+  console.log(isValidCookie)
+  if(request.nextUrl.pathname === '/' && !isValidCookie) {
+    return NextResponse.redirect(new URL('/login', request.nextUrl))
+  }
+
+  if(request.nextUrl.pathname.startsWith('/login') && isValidCookie) {
     return NextResponse.redirect(new URL('/', request.nextUrl))
   }
 
-  if(request.nextUrl.pathname === '/' && !cookie?.value) {
-    return NextResponse.redirect(new URL('/login', request.nextUrl))
-  }
 
   return NextResponse.next()
 }

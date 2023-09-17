@@ -1,27 +1,20 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
 import * as cookie from 'cookie';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
-import { resetDatabase } from './utils/resetDatabase';
-import { PRISMA_SERVICE } from '../src/constants/tokens';
-import { loginAdmin } from './utils/loginAdmin';
 import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
+import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
+import { createTestApp } from './utils/app';
+import { loginAdmin } from './utils/loginAdmin';
+import { resetDatabase } from './utils/resetDatabase';
 
 describe('AdminController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
-    await app.init();
-    prisma = app.get(PRISMA_SERVICE);
+    const sut = await createTestApp();
+    app = sut.app;
+    prisma = sut.prisma;
   });
 
   afterEach(async () => {
@@ -39,7 +32,7 @@ describe('AdminController (e2e)', () => {
       const token = await loginAdmin(app);
       const response = await request(app.getHttpServer())
         .post('/admin')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
       expect(response.status).toBe(400);
       expect(response.body.message).toContain('REQUIRED_NAME');
       expect(response.body.message).toContain('REQUIRED_EMAIL');
@@ -50,7 +43,7 @@ describe('AdminController (e2e)', () => {
       const token = await loginAdmin(app);
       const response = await request(app.getHttpServer())
         .post('/admin')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .send({ email: 'invalid-email' });
       expect(response.status).toBe(400);
       expect(response.body.message).toContain('INVALID_EMAIL');
@@ -60,7 +53,7 @@ describe('AdminController (e2e)', () => {
       const token = await loginAdmin(app);
       const response = await request(app.getHttpServer())
         .post('/admin')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .send({ password: '123' });
       expect(response.status).toBe(400);
       expect(response.body.message).toContain('WEAK_PASSWORD');
@@ -70,7 +63,7 @@ describe('AdminController (e2e)', () => {
       const token = await loginAdmin(app);
       const response = await request(app.getHttpServer())
         .post('/admin')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .send({
           name: 'admin',
           email: 'admin-2@example.com',

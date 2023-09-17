@@ -17,6 +17,11 @@ const postMuscle = async (name: string) => {
 
 }
 
+const postMuscleErrors: Record<number, string> = {
+  409: 'Músculo já cadastrado',
+  400: 'Nome inválido',
+}
+
 const CreateMuscleForm: React.FC = () => {
   const [name, setName] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
@@ -34,12 +39,8 @@ const CreateMuscleForm: React.FC = () => {
         await mutate('muscles')
         return
       }
-      const errors: Record<number, string> = {
-        409: 'Músculo já cadastrado',
-        400: 'Nome inválido',
-      }
-      const error = errors[response.status] || 'Erro desconhecido'
-      console.log('toast error', error)
+
+      const error = postMuscleErrors[response.status] || 'Erro desconhecido'
       toast.error(error, {
         theme: 'dark',
         position: 'bottom-right',
@@ -50,24 +51,26 @@ const CreateMuscleForm: React.FC = () => {
     }
   }
 
-  return  <form className="flex gap-3"
-    onSubmit={onSubmit}
-  >
-    <input 
-      className="bg-stone-950 font-semibold text-white px-5 py-3 rounded-lg flex-1" 
-      type="text"
-      name='name'
-      autoComplete='off'
-      value={name}
-      onChange={event => setName(event.target.value)}
-      placeholder="Adicionar músculo"
-    />
-    <button type="submit" title="Salvar" className="bg-amber-500 text-white px-5 py-3 rounded-lg">
-      {
-        isLoading ? <Loading /> : <AiOutlineCheck size={24} />
-      }
-    </button>
-  </form>
+  return  <li className='flex'>
+    <form className="flex flex-1 gap-3"
+      onSubmit={onSubmit}
+    >
+      <input 
+        className="bg-stone-950 font-semibold text-white px-5 py-3 rounded-lg flex-1" 
+        type="text"
+        name='name'
+        autoComplete='off'
+        value={name}
+        onChange={event => setName(event.target.value)}
+        placeholder="Adicionar músculo"
+      />
+      <button type="submit" title="Salvar" className="bg-amber-500 text-white px-6 py-3 rounded-lg">
+        {
+          isLoading ? <Loading /> : <AiOutlineCheck size={24} />
+        }
+      </button>
+    </form>
+  </li>
 }
 
 export default CreateMuscleForm

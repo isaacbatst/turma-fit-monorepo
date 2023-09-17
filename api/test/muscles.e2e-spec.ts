@@ -1,11 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
-import { PRISMA_SERVICE } from '../src/constants/tokens';
-import { resetDatabase } from './utils/resetDatabase';
 import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
+import { createTestApp } from './utils/app';
 import { loginAdmin } from './utils/loginAdmin';
+import { resetDatabase } from './utils/resetDatabase';
+import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
 
 describe('MusclesController (e2e)', () => {
   let app: INestApplication;
@@ -13,14 +12,9 @@ describe('MusclesController (e2e)', () => {
   let token: string;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
-    await app.init();
-    prisma = app.get(PRISMA_SERVICE);
+    const sut = await createTestApp();
+    app = sut.app;
+    prisma = sut.prisma;
     token = await loginAdmin(app);
   });
 
@@ -28,71 +22,124 @@ describe('MusclesController (e2e)', () => {
     await resetDatabase(prisma);
   });
 
-  it('/muscles (POST) returns 401 without token', async () => {
-    const response = await request(app.getHttpServer()).post('/muscles');
+  describe('/muscles (POST)', () => {
+    it('returns 401 without token', async () => {
+      const response = await request(app.getHttpServer()).post('/muscles');
 
-    expect(response.status).toBe(401);
-    expect(response.body.message).toContain('MISSING_TOKEN');
+      expect(response.status).toBe(401);
+      expect(response.body.message).toContain('MISSING_TOKEN');
+    });
+
+    it('returns 400 without name', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('REQUIRED_NAME');
+    });
+
+    it('returns 201', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
+
+      expect(response.status).toBe(201);
+      expect(response.body.id).toBeDefined();
+    });
+
+    it('returns 409 with repeated name', async () => {
+      const response1 = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
+
+      expect(response1.status).toBe(201);
+
+      const response2 = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
+      expect(response2.status).toBe(409);
+    });
   });
 
-  it('/muscles (POST) returns 400 without name', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/muscles')
-      .set('Authorization', `Bearer ${token}`);
+  describe('/muscles (GET)', () => {
+    it('/muscles (GET) empty list', async () => {
+      await request(app.getHttpServer())
+        .get('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .expect(200)
+        .expect([]);
+    });
 
-    expect(response.status).toBe(400);
-    expect(response.body.message).toContain('REQUIRED_NAME');
+    it('/muscles (GET) after create', async () => {
+      const postResponse = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
+
+      expect(postResponse.status).toBe(201);
+
+      const getResponse = await request(app.getHttpServer())
+        .get('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+
+      expect(getResponse.status).toBe(200);
+      expect(getResponse.body).toContainEqual({
+        id: postResponse.body.id,
+        name: 'biceps',
+      });
+    });
   });
 
-  it('/muscles (POST) returns 201', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/muscles')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ name: 'biceps' });
+  describe('/muscles (PATCH)', () => {
+    let muscleId: string;
 
-    expect(response.status).toBe(201);
-  });
+    beforeEach(async () => {
+      const postResponse = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
 
-  it('/muscles (POST) returns 409 with repeated name', async () => {
-    const response1 = await request(app.getHttpServer())
-      .post('/muscles')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ name: 'biceps' });
+      muscleId = postResponse.body.id;
+    });
 
-    expect(response1.status).toBe(201);
+    it('returns 401 without token', async () => {
+      const response = await request(app.getHttpServer()).patch(
+        `/muscles/${muscleId}`,
+      );
 
-    const response2 = await request(app.getHttpServer())
-      .post('/muscles')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ name: 'biceps' });
-    console.log(response2.status, response2.body);
-    expect(response2.status).toBe(409);
-  });
+      expect(response.status).toBe(401);
+      expect(response.body.message).toContain('MISSING_TOKEN');
+    });
 
-  it('/muscles (GET) empty list', async () => {
-    await request(app.getHttpServer())
-      .get('/muscles')
-      .set('Authorization', `Bearer ${token}`)
-      .expect(200)
-      .expect([]);
-  });
+    it('returns 400 without name', async () => {
+      const response = await request(app.getHttpServer())
+        .patch(`/muscles/${muscleId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
-  it('/muscles (GET) after create', async () => {
-    const postResponse = await request(app.getHttpServer())
-      .post('/muscles')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ name: 'biceps' });
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('REQUIRED_NAME');
+    });
 
-    expect(postResponse.status).toBe(201);
+    it('returns 404 with invalid id', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/muscles/invalid-id')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
 
-    const getResponse = await request(app.getHttpServer())
-      .get('/muscles')
-      .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(404);
+    });
 
-    expect(getResponse.status).toBe(200);
-    expect(getResponse.body).toContainEqual({
-      id: postResponse.body.id,
-      name: 'biceps',
+    it('returns 204', async () => {
+      const response = await request(app.getHttpServer())
+        .patch(`/muscles/${muscleId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'triceps' });
+
+      expect(response.status).toBe(204);
     });
   });
 });

@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractTokenFromRequest(request);
     if (!token) {
       throw new UnauthorizedException('MISSING_TOKEN');
     }
@@ -60,8 +60,7 @@ export class AuthGuard implements CanActivate {
     ]);
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const cookies = request.cookies;
-    return cookies[DASHBOARD_AUTH_COOKIE];
+  private extractTokenFromRequest(request: Request): string | undefined {
+    return request.cookies[DASHBOARD_AUTH_COOKIE];
   }
 }

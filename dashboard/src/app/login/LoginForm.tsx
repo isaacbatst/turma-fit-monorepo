@@ -27,7 +27,7 @@ const LoginForm = () => {
   }
 
   return (
-    <form className="flex flex-col gap-10">
+    <form className="flex flex-col gap-10" >
       <div className=''>
         <h2 className='text-4xl font-semibold mb-2'>Dashboard TurmaFit</h2>
         <p className="text-sm text-stone-950 opacity-50">Acesse o dashboard da administração</p>

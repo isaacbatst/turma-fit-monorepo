@@ -86,7 +86,13 @@ describe('AdminController', () => {
     expect(res.cookie).toHaveBeenCalledWith(
       DASHBOARD_AUTH_COOKIE,
       'fake-token',
-      { httpOnly: true },
+      {
+        httpOnly: true,
+        domain: undefined,
+        maxAge: 604800000,
+        path: '/',
+        secure: false,
+      },
     );
   });
 });

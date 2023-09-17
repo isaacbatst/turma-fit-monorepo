@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -33,11 +34,15 @@ export class MusclesController {
     return this.musclesService.findOne(id);
   }
 
+  @Roles(Role.admin)
+  @HttpCode(204)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMuscleDto: UpdateMuscleDto) {
     return this.musclesService.update(id, updateMuscleDto);
   }
 
+  @Roles(Role.admin)
+  @HttpCode(204)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.musclesService.remove(id);
