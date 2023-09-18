@@ -2,6 +2,7 @@
 import useSWR from 'swr'
 import MuscleListItem from './MuscleListItem'
 import { fetchMusclesFromFrontend } from './fetchMusclesFromFrontend'
+import Loading from '../../components/Loading'
 
 const useMuscles = () => {
   const { data, error, isLoading, mutate } = useSWR('muscles', fetchMusclesFromFrontend)
@@ -13,10 +14,13 @@ const useMuscles = () => {
   }
 }
 const MusclesList = () => {
-  const { muscles } = useMuscles()
-  return (
-    muscles?.map(muscle => <MuscleListItem muscle={muscle} key={muscle.id} />)
-  )
+  const { muscles, isLoading } = useMuscles()
+  return isLoading 
+    ? <li className='flex flex-1 justify-center items-center'><Loading /></li>
+    :
+    (
+      muscles?.map(muscle => <MuscleListItem muscle={muscle} key={muscle.id} />)
+    )
 }
 
 export default MusclesList
