@@ -2,14 +2,18 @@ import React, { PropsWithChildren } from 'react'
 
 type Props = {
   onClick: () => void
+  disabled?: boolean
 }
 
-const MuscleButton = ({onClick, children}: PropsWithChildren<Props>) => {
+const MuscleButton = ({onClick, children, disabled = false}: PropsWithChildren<Props>) => {
   return (
     <button 
       onClick={onClick}
       type="button" 
-      className="bg-stone-800 text-white px-3 py-1 rounded-md hover:scale-105 active:opacity-80">
+      disabled={disabled}
+      className="bg-stone-800 w-20 text-white px-3 py-1 rounded-md 
+      flex items-center justify-center
+      hover:scale-105 active:opacity-80">
       {children}
     </button>
   )

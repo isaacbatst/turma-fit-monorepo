@@ -11,7 +11,7 @@ describe('AdminController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const sut = await createTestApp();
     app = sut.app;
     prisma = sut.prisma;

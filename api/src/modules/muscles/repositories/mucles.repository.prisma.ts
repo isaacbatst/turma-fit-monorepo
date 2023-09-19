@@ -64,10 +64,22 @@ export class MusclesRepositoryPrisma implements MusclesRepository {
     }
   }
   async remove(id: string): Promise<void> {
-    await this.prisma.muscle.delete({
-      where: {
-        id: id,
-      },
-    });
+    try {
+      await this.prisma.muscle.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2025') {
+          const message = `MUSCLE_NOT_FOUND`;
+          throw new NotFoundException({ message });
+        }
+      }
+
+      console.error(err);
+      throw new InternalServerErrorException();
+    }
   }
 }

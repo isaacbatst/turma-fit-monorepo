@@ -11,10 +11,13 @@ describe('MusclesController (e2e)', () => {
   let prisma: PrismaService;
   let token: string;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const sut = await createTestApp();
     app = sut.app;
     prisma = sut.prisma;
+  });
+
+  beforeEach(async () => {
     token = await loginAdmin(app);
   });
 
@@ -138,6 +141,45 @@ describe('MusclesController (e2e)', () => {
         .patch(`/muscles/${muscleId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .send({ name: 'triceps' });
+
+      expect(response.status).toBe(204);
+    });
+  });
+
+  describe('/muscles (DELETE)', () => {
+    let muscleId: string;
+
+    beforeEach(async () => {
+      const postResponse = await request(app.getHttpServer())
+        .post('/muscles')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+        .send({ name: 'biceps' });
+
+      expect(postResponse.status).toBe(201);
+      muscleId = postResponse.body.id;
+    });
+
+    it('returns 401 without token', async () => {
+      const response = await request(app.getHttpServer()).delete(
+        `/muscles/${muscleId}`,
+      );
+
+      expect(response.status).toBe(401);
+      expect(response.body.message).toContain('MISSING_TOKEN');
+    });
+
+    it('returns 404 with invalid id', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/muscles/invalid-id')
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+
+      expect(response.status).toBe(404);
+    });
+
+    it('returns 204', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(`/muscles/${muscleId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(204);
     });

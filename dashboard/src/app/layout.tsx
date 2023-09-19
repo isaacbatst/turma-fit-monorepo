@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google'
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
+  variable: '--font-inter'
 })
 
 export const metadata = {
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={`${inter.className} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   )
