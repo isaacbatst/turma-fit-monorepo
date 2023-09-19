@@ -1,16 +1,13 @@
-import {
-  ConflictException,
-  Inject,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { Muscle } from '../entities/muscle.entity';
-import { MusclesRepository } from './muscles.repository';
+import { Inject } from '@nestjs/common';
+import { PrismaErrorAdapter } from '../../../adapters/prisma-errors.adapter';
 import { PRISMA_SERVICE } from '../../../constants/tokens';
 import { PrismaService } from '../../core/DataSource/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Muscle } from '../entities/muscle.entity';
+import { MusclesRepository } from './muscles.repository';
 
 export class MusclesRepositoryPrisma implements MusclesRepository {
+  private readonly prismaErrorAdapter = new PrismaErrorAdapter('muscle');
+
   constructor(@Inject(PRISMA_SERVICE) private prisma: PrismaService) {}
   async create(muscle: Muscle): Promise<void> {
     try {
@@ -21,14 +18,7 @@ export class MusclesRepositoryPrisma implements MusclesRepository {
         },
       });
     } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === 'P2002'
-      ) {
-        const repeatedField = (err.meta?.target as string[])[0];
-        const message = `${repeatedField.toUpperCase()}_ALREADY_EXISTS`;
-        throw new ConflictException({ message });
-      }
+      this.prismaErrorAdapter.adapt(err);
     }
   }
   async findAll(): Promise<Muscle[]> {
@@ -46,21 +36,7 @@ export class MusclesRepositoryPrisma implements MusclesRepository {
         },
       });
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          const repeatedField = (err.meta?.target as string[])[0];
-          const message = `${repeatedField.toUpperCase()}_ALREADY_EXISTS`;
-          throw new ConflictException({ message });
-        }
-
-        if (err.code === 'P2025') {
-          const message = `MUSCLE_NOT_FOUND`;
-          throw new NotFoundException({ message });
-        }
-      }
-
-      console.error(err);
-      throw new InternalServerErrorException();
+      this.prismaErrorAdapter.adapt(err);
     }
   }
   async remove(id: string): Promise<void> {
@@ -71,15 +47,7 @@ export class MusclesRepositoryPrisma implements MusclesRepository {
         },
       });
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          const message = `MUSCLE_NOT_FOUND`;
-          throw new NotFoundException({ message });
-        }
-      }
-
-      console.error(err);
-      throw new InternalServerErrorException();
+      this.prismaErrorAdapter.adapt(err);
     }
   }
 }

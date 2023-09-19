@@ -3,20 +3,28 @@ import { PrismaService } from '../../core/DataSource/prisma.service';
 import { Admin } from '../entities/admin.entity';
 import { AdminRepository } from './admin.repository';
 import { PRISMA_SERVICE } from '../../../constants/tokens';
+import { PrismaErrorAdapter } from '../../../adapters/prisma-errors.adapter';
 
 export class AdminRepositoryPrisma implements AdminRepository {
+  private readonly prismaErrorAdapter = new PrismaErrorAdapter('admin');
+
   constructor(@Inject(PRISMA_SERVICE) private prisma: PrismaService) {}
 
   async create(admin: Admin): Promise<void> {
-    await this.prisma.admin.create({
-      data: {
-        email: admin.getEmail(),
-        name: admin.getName(),
-        password: admin.getPassword(),
-        id: admin.getId(),
-      },
-    });
+    try {
+      await this.prisma.admin.create({
+        data: {
+          email: admin.getEmail(),
+          name: admin.getName(),
+          password: admin.getPassword(),
+          id: admin.getId(),
+        },
+      });
+    } catch (err) {
+      this.prismaErrorAdapter.adapt(err);
+    }
   }
+
   async findByEmail(email: string): Promise<Admin | null> {
     const admin = await this.prisma.admin.findUnique({
       where: {
@@ -33,7 +41,6 @@ export class AdminRepositoryPrisma implements AdminRepository {
         id: id,
       },
     });
-
     return admin ? new Admin(admin) : null;
   }
 }
