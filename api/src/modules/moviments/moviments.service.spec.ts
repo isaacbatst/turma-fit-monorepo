@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MovimentsService } from './moviments.service';
-import { MovimentRepositoryMemory } from './repositories/moviments.repository.memory';
 import {
   ID_GENERATOR,
   MOVIMENT_REPOSITORY,
   MUSCLE_REPOSITORY,
 } from '../../constants/tokens';
 import { IdGeneratorFake } from '../core/IdGenerator/IdGeneratorFake';
-import { MusclesRepositoryMemory } from '../muscles/repositories/muscles.repository.memory';
 import { Muscle } from '../muscles/entities/muscle.entity';
+import { MusclesRepositoryMemory } from '../muscles/repositories/muscles.repository.memory';
+import { MovimentsService } from './moviments.service';
+import { MovimentRepositoryMemory } from './repositories/moviments.repository.memory';
 
 describe('MovimentsService', () => {
   let service: MovimentsService;
@@ -63,5 +63,15 @@ describe('MovimentsService', () => {
     const moviments = await service.findAll();
     expect(moviments).toHaveLength(1);
     expect(moviments[0].name).toBe('moviment');
+  });
+
+  it('should delete moviment', async () => {
+    await muscleRepository.create(new Muscle('muscle-id', 'muscle'));
+    await service.create({
+      name: 'moviment',
+      muscleId: 'muscle-id',
+    });
+    await service.delete('fake-id');
+    expect(movimentRepository.items).toHaveLength(0);
   });
 });
