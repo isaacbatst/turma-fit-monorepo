@@ -21,6 +21,10 @@ describe('AdminController (e2e)', () => {
     await resetDatabase(prisma);
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   describe('/admin (POST)', () => {
     it('returns 401 without token', async () => {
       const response = await request(app.getHttpServer()).post('/admin');

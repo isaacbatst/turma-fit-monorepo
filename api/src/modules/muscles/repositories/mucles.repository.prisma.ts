@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { PrismaErrorAdapter } from '../../../adapters/prisma-errors.adapter';
+import { PrismaErrorAdapter } from '../../../common/adapters/prisma-errors.adapter';
 import { PRISMA_SERVICE } from '../../../constants/tokens';
 import { PrismaService } from '../../core/DataSource/prisma.service';
 import { Muscle } from '../entities/muscle.entity';

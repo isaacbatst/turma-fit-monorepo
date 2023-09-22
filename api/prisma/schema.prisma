@@ -32,3 +32,8 @@ model Muscle {
   id   String @id @default(uuid())
   name String @unique
 }
+
+model Equipment {
+  id   String @id @default(uuid())
+  name String @unique
+}

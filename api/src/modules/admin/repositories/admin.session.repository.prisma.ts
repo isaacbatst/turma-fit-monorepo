@@ -3,7 +3,7 @@ import { PrismaService } from '../../core/DataSource/prisma.service';
 import { AdminSession } from '../entities/admin.session.entity';
 import { AdminSessionRepository } from './admin.session.repository';
 import { PRISMA_SERVICE } from '../../../constants/tokens';
-import { PrismaErrorAdapter } from '../../../adapters/prisma-errors.adapter';
+import { PrismaErrorAdapter } from '../../../common/adapters/prisma-errors.adapter';
 
 export class AdminSessionRepositoryPrisma implements AdminSessionRepository {
   private readonly prismaErrorAdapter = new PrismaErrorAdapter('adminSession');

@@ -6,7 +6,7 @@ import { loginAdmin } from './utils/loginAdmin';
 import { resetDatabase } from './utils/resetDatabase';
 import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
 
-describe('MusclesController (e2e)', () => {
+describe('EquipmentsController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let token: string;
@@ -29,9 +29,9 @@ describe('MusclesController (e2e)', () => {
     await app.close();
   });
 
-  describe('/muscles (POST)', () => {
+  describe('/equipments (POST)', () => {
     it('returns 401 without token', async () => {
-      const response = await request(app.getHttpServer()).post('/muscles');
+      const response = await request(app.getHttpServer()).post('/equipments');
 
       expect(response.status).toBe(401);
       expect(response.body.message).toContain('MISSING_TOKEN');
@@ -39,7 +39,7 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 400 without name', async () => {
       const response = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(400);
@@ -48,9 +48,9 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 201', async () => {
       const response = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
 
       expect(response.status).toBe(201);
       expect(response.body.id).toBeDefined();
@@ -58,64 +58,64 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 409 with repeated name', async () => {
       const response1 = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
 
       expect(response1.status).toBe(201);
 
       const response2 = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
       expect(response2.status).toBe(409);
     });
   });
 
-  describe('/muscles (GET)', () => {
-    it('/muscles (GET) empty list', async () => {
+  describe('/equipments (GET)', () => {
+    it('/equipments (GET) empty list', async () => {
       await request(app.getHttpServer())
-        .get('/muscles')
+        .get('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .expect(200)
         .expect([]);
     });
 
-    it('/muscles (GET) after create', async () => {
+    it('/equipments (GET) after create', async () => {
       const postResponse = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
 
       expect(postResponse.status).toBe(201);
 
       const getResponse = await request(app.getHttpServer())
-        .get('/muscles')
+        .get('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(getResponse.status).toBe(200);
       expect(getResponse.body).toContainEqual({
         id: postResponse.body.id,
-        name: 'biceps',
+        name: 'Barra',
       });
     });
   });
 
-  describe('/muscles (PATCH)', () => {
-    let muscleId: string;
+  describe('/equipments (PATCH)', () => {
+    let equipmentId: string;
 
     beforeEach(async () => {
       const postResponse = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
 
-      muscleId = postResponse.body.id;
+      equipmentId = postResponse.body.id;
     });
 
     it('returns 401 without token', async () => {
       const response = await request(app.getHttpServer()).patch(
-        `/muscles/${muscleId}`,
+        `/equipments/${equipmentId}`,
       );
 
       expect(response.status).toBe(401);
@@ -124,7 +124,7 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 400 without name', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/muscles/${muscleId}`)
+        .patch(`/equipments/${equipmentId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(400);
@@ -133,39 +133,39 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 404 with invalid id', async () => {
       const response = await request(app.getHttpServer())
-        .patch('/muscles/invalid-id')
+        .patch('/equipments/invalid-id')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
 
       expect(response.status).toBe(404);
     });
 
     it('returns 204', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/muscles/${muscleId}`)
+        .patch(`/equipments/${equipmentId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'triceps' });
+        .send({ name: 'Halteres' });
 
       expect(response.status).toBe(204);
     });
   });
 
-  describe('/muscles (DELETE)', () => {
-    let muscleId: string;
+  describe('/equipments (DELETE)', () => {
+    let equipmentId: string;
 
     beforeEach(async () => {
       const postResponse = await request(app.getHttpServer())
-        .post('/muscles')
+        .post('/equipments')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send({ name: 'biceps' });
+        .send({ name: 'Barra' });
 
       expect(postResponse.status).toBe(201);
-      muscleId = postResponse.body.id;
+      equipmentId = postResponse.body.id;
     });
 
     it('returns 401 without token', async () => {
       const response = await request(app.getHttpServer()).delete(
-        `/muscles/${muscleId}`,
+        `/equipments/${equipmentId}`,
       );
 
       expect(response.status).toBe(401);
@@ -174,7 +174,7 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 404 with invalid id', async () => {
       const response = await request(app.getHttpServer())
-        .delete('/muscles/invalid-id')
+        .delete('/equipments/invalid-id')
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(404);
@@ -182,7 +182,7 @@ describe('MusclesController (e2e)', () => {
 
     it('returns 204', async () => {
       const response = await request(app.getHttpServer())
-        .delete(`/muscles/${muscleId}`)
+        .delete(`/equipments/${equipmentId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(204);

@@ -5,9 +5,10 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { CoreModule } from './modules/core/core.module';
 import { MusclesModule } from './modules/muscles/muscles.module';
+import { EquipmentsModule } from './modules/equipments/equipments.module';
 
 @Module({
-  imports: [AuthModule, MusclesModule, AdminModule, CoreModule],
+  imports: [AuthModule, MusclesModule, AdminModule, EquipmentsModule, CoreModule],
   providers: [
     {
       provide: APP_GUARD,

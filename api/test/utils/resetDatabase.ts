@@ -8,6 +8,7 @@ export const resetDatabase = async (prisma: PrismaService) => {
     prisma.muscle.deleteMany(),
     prisma.admin.deleteMany(),
     prisma.adminSession.deleteMany(),
+    prisma.equipment.deleteMany(),
   ]);
 
   await prisma.admin.create({
