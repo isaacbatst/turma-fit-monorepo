@@ -6,13 +6,15 @@ import {RiAdminLine} from 'react-icons/ri'
 import LogoutButton from './LogoutButton'
 import SidebarLink from './SidebarLink'
 import { usePathname } from 'next/navigation'
+import { MdSportsGymnastics } from 'react-icons/md'
 
 const links = [
   { href: '/', label: 'Início', Icon: AiOutlineHome },
-  { href: '/users', label: 'Usuários', Icon: AiOutlineUser },
-  { href: '/admins', label: 'Administradores', Icon: RiAdminLine },
+  // { href: '/users', label: 'Usuários', Icon: AiOutlineUser },
+  // { href: '/admins', label: 'Administradores', Icon: RiAdminLine },
   { href: '/muscles', label: 'Músculos', Icon: GiMuscleUp },
-  { href: '/moviments', label: 'Movimentos', Icon: CgGym },
+  // { href: '/moviments', label: 'Movimentos', Icon: MdSportsGymnastics },
+  { href: '/equipments', label: 'Equipamentos', Icon: CgGym },
 ]
 
 const Sidebar = () => {
