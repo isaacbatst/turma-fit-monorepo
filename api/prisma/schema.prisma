@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl"]
 }
 
@@ -17,6 +17,8 @@ model Admin {
   name     String
   password String
   sessions AdminSession[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model AdminSession {
@@ -26,14 +28,29 @@ model AdminSession {
   expiresIn   Int
   user        Admin     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      String
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model Muscle {
-  id   String @id @default(uuid())
-  name String @unique
+  id       String     @id @default(uuid())
+  name     String     @unique
+  moviments Moviment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model Equipment {
   id   String @id @default(uuid())
   name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model Moviment {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  muscle    Muscle   @relation(fields: [muscleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+  muscleId  String
 }

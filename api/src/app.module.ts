@@ -6,9 +6,17 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CoreModule } from './modules/core/core.module';
 import { MusclesModule } from './modules/muscles/muscles.module';
 import { EquipmentsModule } from './modules/equipments/equipments.module';
+import { MovimentsModule } from './modules/moviments/moviments.module';
 
 @Module({
-  imports: [AuthModule, MusclesModule, AdminModule, EquipmentsModule, CoreModule],
+  imports: [
+    AuthModule,
+    MusclesModule,
+    AdminModule,
+    EquipmentsModule,
+    CoreModule,
+    MovimentsModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,

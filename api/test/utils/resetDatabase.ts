@@ -5,6 +5,7 @@ const encrypter = new EncrypterArgon2();
 
 export const resetDatabase = async (prisma: PrismaService) => {
   await prisma.$transaction([
+    prisma.moviment.deleteMany(),
     prisma.muscle.deleteMany(),
     prisma.admin.deleteMany(),
     prisma.adminSession.deleteMany(),

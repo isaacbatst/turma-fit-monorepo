@@ -5,4 +5,5 @@ export interface MusclesRepository {
   findAll(): Promise<Muscle[]>;
   update(muscle: Muscle): Promise<void>;
   remove(id: string): Promise<void>;
+  findById(id: string): Promise<Muscle | undefined>;
 }

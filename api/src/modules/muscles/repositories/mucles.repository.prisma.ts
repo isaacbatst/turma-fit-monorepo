@@ -21,6 +21,13 @@ export class MusclesRepositoryPrisma implements MusclesRepository {
       this.prismaErrorAdapter.adapt(err);
     }
   }
+  async findById(id: string): Promise<Muscle | undefined> {
+    const muscle = await this.prisma.muscle.findUnique({
+      where: { id },
+    });
+    return muscle ? new Muscle(muscle.id, muscle.name) : undefined;
+  }
+
   async findAll(): Promise<Muscle[]> {
     const mucles = await this.prisma.muscle.findMany();
     return mucles.map((muscle) => new Muscle(muscle.id, muscle.name));
