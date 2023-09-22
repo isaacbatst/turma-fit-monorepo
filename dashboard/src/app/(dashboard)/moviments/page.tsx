@@ -1,6 +1,7 @@
+import SectionTitle from "../../components/SectionTitle";
 
 export default function Moviments() {
   return (
-    <h2>Movimentos</h2>
+    <SectionTitle>Movimentos</SectionTitle>
   );
 }

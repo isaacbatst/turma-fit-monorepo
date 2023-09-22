@@ -1,9 +1,9 @@
 import React from 'react'
-import { Muscle } from '../../../types/Muscle'
-import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'
-import { useSWRConfig } from 'swr'
-import Loading from '../../components/Loading'
 import { toast } from 'react-toastify'
+import { useSWRConfig } from 'swr'
+import { Muscle } from '../../../types/Muscle'
+import EditButtons from '../../components/EditButtons'
+import InputEdit from '../../components/InputEdit'
 
 type Props = {
   muscle: Muscle,
@@ -58,20 +58,16 @@ const MuscleListEditItem = ({muscle, finishEdit}: Props) => {
       className="flex flex-1 min-h-[56px] justify-between text-lg text-stone-900 rounded-2xl" 
       key={muscle.id}>
       <form onSubmit={submitEdit} className='flex flex-1 gap-2'>
-        <input className='rounded-2xl px-3 flex-1 bg-white ' type="text" name="edit-muscle" 
+        <InputEdit  
+          inputName='name'
+          setValue={setName}
           value={name}
-          onChange={(e) => setName(e.target.value)} 
+          cancelEdit={finishEdit}
         />
-        <div className='flex gap-2'>
-          <button className='bg-green-600 px-5 text-white rounded-2xl'
-            type='submit'
-            disabled={isLoading}
-          >
-            {isLoading ? <Loading color='white' /> : <AiOutlineCheck />}
-          </button>
-          <button className='bg-red-600 px-5 text-white rounded-2xl' 
-            onClick={finishEdit}><AiOutlineClose /></button>
-        </div>
+        <EditButtons 
+          finishEdit={finishEdit}
+          isLoading={isLoading}
+        />
       </form>
     </li>
   )

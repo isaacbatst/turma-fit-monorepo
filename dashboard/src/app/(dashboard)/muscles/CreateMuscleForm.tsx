@@ -4,6 +4,7 @@ import { AiOutlineCheck } from 'react-icons/ai';
 import { useSWRConfig } from 'swr';
 import Loading from '../../components/Loading';
 import { toast } from 'react-toastify';
+import InputCreate from '../../components/InputCreate';
 
 const postMuscle = async (name: string) => {
   return fetch('http://localhost:5555/muscles', {
@@ -55,14 +56,11 @@ const CreateMuscleForm: React.FC = () => {
     <form className="flex flex-1 gap-3"
       onSubmit={onSubmit}
     >
-      <input 
-        className="bg-stone-950 font-semibold text-white px-5 py-3 rounded-lg flex-1" 
-        type="text"
-        name='name'
-        autoComplete='off'
+      <InputCreate  
+        inputName='name'
+        placeholder='Adicionar músculo'
+        setValue={setName}
         value={name}
-        onChange={event => setName(event.target.value)}
-        placeholder="Adicionar músculo"
       />
       <button type="submit" title="Salvar" className="bg-amber-500 text-white px-6 py-3 rounded-lg">
         {

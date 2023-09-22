@@ -1,9 +1,8 @@
 import { Equipment } from '@/types/Equipment'
-import ItemActionButton from '@/app/components/ItemActionButton'
-import { useSWRConfig } from 'swr'
 import { useState } from 'react'
-import Loading from '@/app/components/Loading'
 import { toast } from 'react-toastify'
+import { useSWRConfig } from 'swr'
+import ListViewItem from '../../components/ListViewItem'
 
 type Props = {
   equipment: Equipment
@@ -42,19 +41,12 @@ const EquipmentListViewItem = ({equipment, startEdit}: Props) => {
   }
 
   return (
-    <li
-      className="flex min-h-[56px] flex-1 gap-10 items-center justify-between bg-stone-950 text-white px-5 py-3 rounded-2xl" 
-      key={equipment.id}>
-      <p className="text-lg">{equipment.name}</p>
-      <div className="flex gap-3">
-        <ItemActionButton onClick={() => startEdit()}>Editar</ItemActionButton>
-        <ItemActionButton
-          disabled={isDeleting}
-          onClick={() => onDelete()}>
-          {isDeleting ? <Loading /> : 'Excluir'}
-        </ItemActionButton>
-      </div>
-    </li>
+    <ListViewItem 
+      isDeleting={isDeleting}
+      item={equipment}
+      onDelete={onDelete}
+      startEdit={startEdit}
+    />
   )
 }
 

@@ -1,20 +1,19 @@
 'use client'
-import { AiOutlineHome, AiOutlineUser } from 'react-icons/ai'
-import { GiMuscleUp } from 'react-icons/gi'
+import { usePathname } from 'next/navigation'
+import { AiOutlineHome } from 'react-icons/ai'
 import { CgGym } from 'react-icons/cg'
-import {RiAdminLine} from 'react-icons/ri'
+import { GiMuscleUp } from 'react-icons/gi'
+import { MdSportsGymnastics } from 'react-icons/md'
 import LogoutButton from './LogoutButton'
 import SidebarLink from './SidebarLink'
-import { usePathname } from 'next/navigation'
-import { MdSportsGymnastics } from 'react-icons/md'
 
 const links = [
   { href: '/', label: 'Início', Icon: AiOutlineHome },
   // { href: '/users', label: 'Usuários', Icon: AiOutlineUser },
   // { href: '/admins', label: 'Administradores', Icon: RiAdminLine },
   { href: '/muscles', label: 'Músculos', Icon: GiMuscleUp },
-  // { href: '/moviments', label: 'Movimentos', Icon: MdSportsGymnastics },
   { href: '/equipments', label: 'Equipamentos', Icon: CgGym },
+  { href: '/moviments', label: 'Movimentos', Icon: MdSportsGymnastics },
 ]
 
 const Sidebar = () => {

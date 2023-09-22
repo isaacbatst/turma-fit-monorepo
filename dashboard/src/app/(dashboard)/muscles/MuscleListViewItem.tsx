@@ -1,9 +1,8 @@
 import { Muscle } from '@/types/Muscle'
-import MuscleButton from './MuscleButton'
-import { useSWRConfig } from 'swr'
 import { useState } from 'react'
-import Loading from '../../components/Loading'
 import { toast } from 'react-toastify'
+import { useSWRConfig } from 'swr'
+import ListViewItem from '../../components/ListViewItem'
 
 type Props = {
   muscle: Muscle
@@ -42,19 +41,12 @@ const MuscleListViewItem = ({muscle, startEdit}: Props) => {
   }
 
   return (
-    <li
-      className="flex min-h-[56px] flex-1 gap-10 items-center justify-between bg-stone-950 text-white px-5 py-3 rounded-2xl" 
-      key={muscle.id}>
-      <p className="text-lg">{muscle.name}</p>
-      <div className="flex gap-3">
-        <MuscleButton onClick={() => startEdit()}>Editar</MuscleButton>
-        <MuscleButton
-          disabled={isDeleting}
-          onClick={() => onDelete()}>
-          {isDeleting ? <Loading /> : 'Excluir'}
-        </MuscleButton>
-      </div>
-    </li>
+    <ListViewItem 
+      isDeleting={isDeleting}
+      item={muscle}
+      onDelete={onDelete}
+      startEdit={startEdit}
+    />
   )
 }
 
