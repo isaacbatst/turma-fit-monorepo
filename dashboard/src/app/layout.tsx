@@ -1,6 +1,6 @@
 import './globals.css'
 import 'react-toastify/dist/ReactToastify.css';
-
+import StyledComponentsRegistry from '../lib/AntdRegistry';
 import { Inter } from 'next/font/google'
 
 const inter = Inter({
@@ -19,9 +19,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  console.log('front ou back')
   return (
     <html lang="en" className={`${inter.className} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        <StyledComponentsRegistry>
+          {children}
+        </StyledComponentsRegistry>
+      </body>
     </html>
   )
 }

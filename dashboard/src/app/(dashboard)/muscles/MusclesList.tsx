@@ -1,18 +1,8 @@
 'use client'
-import useSWR from 'swr'
-import MuscleListItem from './MuscleListItem'
-import { fetchMusclesFromFrontend } from './fetchMusclesFromFrontend'
+import { useMuscles } from '../../../hooks/useMuscles'
 import Loading from '../../components/Loading'
+import MuscleListItem from './MuscleListItem'
 
-const useMuscles = () => {
-  const { data, error, isLoading, mutate } = useSWR('muscles', fetchMusclesFromFrontend)
-  return {
-    muscles: data,
-    isLoading,
-    isError: error,
-    mutate
-  }
-}
 const MusclesList = () => {
   const { muscles, isLoading } = useMuscles()
   return isLoading 

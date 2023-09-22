@@ -57,7 +57,7 @@ const CreateEquipmentForm: React.FC = () => {
       onSubmit={onSubmit}
     >
       <InputCreate  
-        inputName='name'
+        inputName='equipment'
         placeholder='Adicionar equipamento'
         setValue={setName}
         value={name}

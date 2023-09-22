@@ -7,7 +7,7 @@ const AppHeader = () => {
       <Link href='/'><Image 
         alt='Logo Turma Fit' 
         src='/turma-fit/base/full/base_logo_transparent_background.png' 
-        height={150} width={150} 
+        height={90} width={150} 
       /></Link>
       <Link href='/my-account' className='font-semibold hover:scale-105 active:opacity-80'>Minha Conta</Link>
     </header>

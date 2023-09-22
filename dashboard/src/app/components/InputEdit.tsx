@@ -27,7 +27,7 @@ const InputEdit = ({inputName, value, setValue, cancelEdit }: Props) => {
 
 
   return (
-    <input className='rounded-2xl px-3 flex-1 bg-white' 
+    <input className='rounded-lg px-3 py-2 flex-1 bg-white text-gray-900' 
       ref={inputRef} autoFocus={true}  
       type="text" name={inputName}
       value={value}

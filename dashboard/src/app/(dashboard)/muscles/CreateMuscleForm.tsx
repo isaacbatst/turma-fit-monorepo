@@ -57,7 +57,7 @@ const CreateMuscleForm: React.FC = () => {
       onSubmit={onSubmit}
     >
       <InputCreate  
-        inputName='name'
+        inputName='muscle'
         placeholder='Adicionar músculo'
         setValue={setName}
         value={name}
