@@ -55,12 +55,13 @@ export class AdminService {
 
   async login(params: { email: string; password: string }) {
     const admin = await this.repository.findByEmail(params.email);
-    if (!admin) throw new UnauthorizedException();
+    if (!admin) throw new UnauthorizedException('INVALID_CREDENTIALS');
     const isPasswordCorrect = await this.encrypter.compare(
       params.password,
       admin.getPassword(),
     );
-    if (!isPasswordCorrect) throw new UnauthorizedException();
+    if (!isPasswordCorrect)
+      throw new UnauthorizedException('INVALID_CREDENTIALS');
     const token = this.tokenGenerator.generate();
     const oneWeekMs = 1000 * 60 * 60 * 24 * 7;
     const session = new AdminSession({

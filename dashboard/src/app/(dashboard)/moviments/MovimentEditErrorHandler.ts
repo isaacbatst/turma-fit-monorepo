@@ -22,7 +22,7 @@ export class MovimentEditErrorHandler extends ErrorHandler {
       }
     },
     409: (error: string) => {
-      if(error === 'NAME_ALREADY_EXISTS') {
+      if(error === 'DUPLICATED_NAME') {
         return 'Já existe um movimento com esse nome.';
       }
     }

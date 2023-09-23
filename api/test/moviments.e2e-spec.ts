@@ -47,7 +47,7 @@ describe('MovimentsController (e2e)', () => {
       const response = await request(app.getHttpServer()).post('/moviments');
 
       expect(response.status).toBe(401);
-      expect(response.body.message).toContain('MISSING_TOKEN');
+      expect(response.body.message).toBe('MISSING_TOKEN');
     });
 
     it('returns 400 without name', async () => {
@@ -76,6 +76,7 @@ describe('MovimentsController (e2e)', () => {
         .send({ name: 'Supino Reto', muscleId: 'not-muscle-id' });
 
       expect(response.status).toBe(404);
+      expect(response.body.message).toBe('MUSCLE_NOT_FOUND');
     });
 
     it('returns 201', async () => {
@@ -105,6 +106,7 @@ describe('MovimentsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .send({ name: 'Supino Reto', muscleId });
       expect(response2.status).toBe(409);
+      expect(response2.body.message).toBe('DUPLICATED_NAME');
     });
   });
 
@@ -158,7 +160,7 @@ describe('MovimentsController (e2e)', () => {
       );
 
       expect(response.status).toBe(401);
-      expect(response.body.message).toContain('MISSING_TOKEN');
+      expect(response.body.message).toBe('MISSING_TOKEN');
     });
 
     it('returns 404 with invalid id', async () => {
@@ -167,6 +169,7 @@ describe('MovimentsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(404);
+      expect(response.body.message).toBe('MOVIMENT_NOT_FOUND');
     });
 
     it('returns 204', async () => {

@@ -11,7 +11,7 @@ type Props = {
 }
 
 const editMuscleErrors: Record<string, string> = {
-  'NAME_ALREADY_EXISTS': 'Já existe um músculo com esse nome',
+  'DUPLICATED_NAME': 'Já existe um músculo com esse nome',
   'REQUIRED_NAME': 'O nome é obrigatório',
   'NOT_FOUND': 'Músculo não encontrado',
 }

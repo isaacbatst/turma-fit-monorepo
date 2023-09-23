@@ -69,6 +69,7 @@ describe('EquipmentsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
         .send({ name: 'Barra' });
       expect(response2.status).toBe(409);
+      expect(response2.body.message).toBe('DUPLICATED_NAME');
     });
   });
 
@@ -94,10 +95,8 @@ describe('EquipmentsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(getResponse.status).toBe(200);
-      expect(getResponse.body).toContainEqual({
-        id: postResponse.body.id,
-        name: 'Barra',
-      });
+      expect(getResponse.body[0].id).toBe(postResponse.body.id)
+      expect(getResponse.body[0].name).toBe('Barra');
     });
   });
 
@@ -138,6 +137,7 @@ describe('EquipmentsController (e2e)', () => {
         .send({ name: 'Barra' });
 
       expect(response.status).toBe(404);
+      expect(response.body.message).toContain('EQUIPMENT_NOT_FOUND');
     });
 
     it('returns 204', async () => {
@@ -178,6 +178,7 @@ describe('EquipmentsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(404);
+      expect(response.body.message).toContain('EQUIPMENT_NOT_FOUND');
     });
 
     it('returns 204', async () => {

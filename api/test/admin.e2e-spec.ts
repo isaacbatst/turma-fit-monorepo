@@ -29,7 +29,7 @@ describe('AdminController (e2e)', () => {
     it('returns 401 without token', async () => {
       const response = await request(app.getHttpServer()).post('/admin');
       expect(response.status).toBe(401);
-      expect(response.body.message).toContain('MISSING_TOKEN');
+      expect(response.body.message).toBe('MISSING_TOKEN');
     });
 
     it('returns 400 without params', async () => {
@@ -99,6 +99,7 @@ describe('AdminController (e2e)', () => {
         .post('/admin/login')
         .send({ email: 'not-found@example.com', password: 'senha-FORTE@032' });
       expect(response.status).toBe(401);
+      expect(response.body.message).toBe('INVALID_CREDENTIALS');
     });
 
     it('returns 401 with found email and invalid password', async () => {
@@ -106,6 +107,7 @@ describe('AdminController (e2e)', () => {
         .post('/admin/login')
         .send({ email: 'admin@example.com', password: 'invalid-password' });
       expect(response.status).toBe(401);
+      expect(response.body.message).toBe('INVALID_CREDENTIALS');
     });
 
     it('returns 200 with found email and valid password', async () => {

@@ -11,7 +11,7 @@ type Props = {
 }
 
 const editErrors: Record<string, string> = {
-  'NAME_ALREADY_EXISTS': 'Já existe um equipamento com esse nome',
+  'DUPLICATED_NAME': 'Já existe um equipamento com esse nome',
   'REQUIRED_NAME': 'O nome é obrigatório',
   'NOT_FOUND': 'Equipamento não encontrado',
 }

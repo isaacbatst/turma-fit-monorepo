@@ -12,7 +12,7 @@ export class PrismaErrorAdapter {
     const isPrismaError = this.isPrismaError(err);
     if (isPrismaError && err.code === 'P2002') {
       const repeatedField = (err.meta?.target as string[])[0];
-      const message = `${repeatedField.toUpperCase()}_ALREADY_EXISTS`;
+      const message = `DUPLICATED_${repeatedField.toUpperCase()}`;
       throw new ConflictException({ message });
     }
 
