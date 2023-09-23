@@ -1,7 +1,10 @@
 import { Moviment } from '@/types/Moviment'
 import React from 'react'
-import { AiFillDelete, AiFillEdit } from 'react-icons/ai'
+import { useSWRConfig } from 'swr'
+import { ErrorHandler } from '../../../errors/ErrorHandler'
+import { ResponseError } from '../../../errors/ResponseError'
 import MovimentListItemEdit from './MovimentListItemEdit'
+import MovimentListItemView from './MovimentListItemView'
 
 type Props = {
   moviment: Moviment
@@ -10,6 +13,36 @@ type Props = {
 
 const MovimentListItem = ({moviment, index}: Props) => {
   const [isEditing, setIsEditing] = React.useState(false)
+  const [isDeleting, setIsDeleting] = React.useState(false)
+  const {mutate} = useSWRConfig()
+
+  const deleteMoviment = async () => {
+    try {
+      setIsDeleting(true)
+      const response = await fetch(`http://localhost:5555/moviments/${moviment.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+
+      
+      if(response.status !== 204){
+        const data = await response.json()
+        throw new ResponseError(data.message, response.status)
+      }
+
+      await mutate('moviments')
+    } catch (error) {
+      console.log(error)
+      const message = error instanceof ResponseError && error.status === 404
+        ? 'Movimento não encontrado'
+        : 'Erro ao excluir movimento'
+
+      ErrorHandler.showToast(message)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+    
 
   return (
     <li 
@@ -20,24 +53,16 @@ const MovimentListItem = ({moviment, index}: Props) => {
       tabIndex={index}
     >
       {
-        isEditing ? <MovimentListItemEdit moviment={moviment} setIsEditing={setIsEditing} /> : (
-          <>
-            <p>{moviment.name}</p>
-            <p>{moviment.muscle.name}</p>
-            <div className="absolute right-0 top-0 py-3 px-5 flex gap-2">
-              <button 
-                type='button' 
-                onClick={() => setIsEditing(true)}
-                className='cursor-pointer p-1 hover:scale-110 active:opacity-70'
-              ><AiFillEdit size={20} /></button>
-              <button 
-                type='button' 
-                onClick={() => setIsEditing(true)}
-                className='cursor-pointer p-1 hover:scale-110 active:opacity-70'
-              ><AiFillDelete size={20} /></button>
-            </div>
-          </>
-        )
+        isEditing 
+          ? <MovimentListItemEdit moviment={moviment} setIsEditing={setIsEditing} /> 
+          : (
+            <MovimentListItemView  
+              moviment={moviment}
+              isDeleting={isDeleting}
+              deleteMoviment={deleteMoviment}
+              startEdit={() => setIsEditing(true)}
+            />
+          )
       }
     </li>
   )

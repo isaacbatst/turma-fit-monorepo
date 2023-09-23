@@ -26,3 +26,12 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+
+input:-webkit-autofill {
+  -webkit-box-shadow:0 0 0 50px white inset; /* Change the color to your own background color */
+  -webkit-text-fill-color: #222;
+}
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #222;
+}

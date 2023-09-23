@@ -10,7 +10,8 @@ type Props = {
 const InputCreate = ({setValue, value, placeholder, inputName}: Props) => {
   return (
     <input 
-      className="bg-stone-950 text-white px-5 py-3 rounded-lg flex-1 border border-stone-800" 
+      className="bg-stone-950 text-white px-5 py-3 rounded-lg flex-1 border border-stone-800
+      autofill:text-blue-600" 
       type="text"
       name={inputName}
       value={value}

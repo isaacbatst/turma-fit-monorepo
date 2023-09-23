@@ -5,6 +5,14 @@ import { ResponseError } from "./ResponseError";
 export abstract class ErrorHandler {
   private static unknownErrorMessage = 'Erro desconhecido. Por favor, tente novamente mais tarde';
 
+  static showToast(message: string): void {
+    toast.error(message, {
+      theme: 'dark',
+      position: 'bottom-right',
+      autoClose: 3000,
+    })
+  }
+
   protected abstract formErrorMessages: Record<string, string>;
   protected abstract responseErrorMessages: Record<number, (error: string) => string | undefined>;
 
@@ -20,10 +28,6 @@ export abstract class ErrorHandler {
   }
 
   showToast(message: string): void {
-    toast.error(message, {
-      theme: 'dark',
-      position: 'bottom-right',
-      autoClose: 3000,
-    })
+    ErrorHandler.showToast(message);
   }
 }

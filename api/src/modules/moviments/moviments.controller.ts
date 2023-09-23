@@ -26,7 +26,7 @@ export class MovimentsController {
 
   @HttpCode(204)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.movimentsService.delete(id);
+  async remove(@Param('id') id: string) {
+    await this.movimentsService.delete(id);
   }
 }
