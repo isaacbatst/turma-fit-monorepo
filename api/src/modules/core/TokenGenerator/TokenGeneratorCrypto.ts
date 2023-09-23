@@ -1,5 +1,5 @@
 import { TokenGenerator } from './TokenGenerator';
-import * as crypto from 'node:crypto';
+import crypto from 'node:crypto';
 
 export class TokenGeneratorCrypto implements TokenGenerator {
   generate(): string {

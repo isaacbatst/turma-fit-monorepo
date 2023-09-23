@@ -1,5 +1,5 @@
-import * as cookie from 'cookie';
-import * as request from 'supertest';
+import cookie from 'cookie';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { DASHBOARD_AUTH_COOKIE } from '../../src/constants/cookies';
 

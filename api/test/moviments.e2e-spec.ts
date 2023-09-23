@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
 import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
 import { createTestApp } from './utils/app';

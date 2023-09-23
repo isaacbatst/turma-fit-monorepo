@@ -1,4 +1,4 @@
-import * as argon2 from 'argon2';
+import argon2 from 'argon2';
 import { Encrypter } from './Encrypter';
 
 export class EncrypterArgon2 implements Encrypter {
