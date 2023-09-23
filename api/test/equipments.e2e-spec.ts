@@ -95,7 +95,7 @@ describe('EquipmentsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(getResponse.status).toBe(200);
-      expect(getResponse.body[0].id).toBe(postResponse.body.id)
+      expect(getResponse.body[0].id).toBe(postResponse.body.id);
       expect(getResponse.body[0].name).toBe('Barra');
     });
   });

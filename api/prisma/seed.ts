@@ -12,6 +12,56 @@ async function main() {
       name: 'admin',
     },
   });
+  await prisma.equipment.createMany({
+    data: [
+      { name: 'Barra' },
+      { name: 'Anilha' },
+      { name: 'Halter' },
+      { name: 'Máquina' },
+    ],
+  });
+  await Promise.all([
+    prisma.muscle.create({
+      data: {
+        name: 'Bíceps',
+        moviments: {
+          createMany: {
+            data: [{ name: 'Rosca direta' }, { name: 'Rosca alternada' }],
+          },
+        },
+      },
+    }),
+    prisma.muscle.create({
+      data: {
+        name: 'Tríceps',
+        moviments: {
+          createMany: {
+            data: [
+              { name: 'Tríceps testa' },
+              { name: 'Tríceps francês' },
+              { name: 'Tríceps coice' },
+            ],
+          },
+        },
+      },
+    }),
+    prisma.muscle.create({
+      data: {
+        name: 'Peitoral',
+        moviments: {
+          createMany: {
+            data: [
+              { name: 'Supino reto' },
+              { name: 'Supino inclinado' },
+              { name: 'Supino declinado' },
+              { name: 'Crucifixo' },
+              { name: 'Peck deck' },
+            ],
+          },
+        },
+      },
+    }),
+  ]);
 }
 
 main()
