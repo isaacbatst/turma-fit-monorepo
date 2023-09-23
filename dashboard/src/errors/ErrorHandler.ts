@@ -17,6 +17,7 @@ export abstract class ErrorHandler {
   protected abstract responseErrorMessages: Record<number, (error: string) => string | undefined>;
 
   getMessage(error: unknown): string {
+    console.log(error)
     if (error instanceof FormError && error.message in this.formErrorMessages) {
       return this.formErrorMessages[error.message] 
     } 

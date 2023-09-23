@@ -48,4 +48,18 @@ export class MovimentsService {
   async delete(id: string) {
     await this.movimentsRepository.remove(id);
   }
+
+  async update(id: string, createMovimentDto: CreateMovimentDto) {
+    const muscle = await this.muscleRepository.findById(
+      createMovimentDto.muscleId,
+    );
+
+    if (!muscle) {
+      throw new NotFoundException('MUSCLE_NOT_FOUND');
+    }
+
+    await this.movimentsRepository.update(
+      new Moviment(id, createMovimentDto.name, muscle),
+    );
+  }
 }
