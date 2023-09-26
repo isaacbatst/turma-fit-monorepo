@@ -6,6 +6,7 @@ import {
   MOVIMENT_REPOSITORY,
   MUSCLE_REPOSITORY,
   PRISMA_SERVICE,
+  TRAINING_REPOSITORY,
 } from '../../../constants/tokens';
 import { AdminRepositoryPrisma } from '../../admin/repositories/admin.repository.prisma';
 import { AdminSessionRepositoryPrisma } from '../../admin/repositories/admin.session.repository.prisma';
@@ -13,6 +14,7 @@ import { PrismaService } from './prisma.service';
 import { MusclesRepositoryPrisma } from '../../muscles/repositories/mucles.repository.prisma';
 import { EquipmentsRepositoryPrisma } from '../../equipments/repositories/equipments.repository.prisma';
 import { MovimentRepositoryPrisma } from '../../moviments/repositories/moviments.repository.prisma';
+import { TrainingsRepositoryMemory } from '../../trainings/repositories/trainings.repository.memory';
 
 @Module({
   providers: [
@@ -40,6 +42,10 @@ import { MovimentRepositoryPrisma } from '../../moviments/repositories/moviments
       provide: MOVIMENT_REPOSITORY,
       useClass: MovimentRepositoryPrisma,
     },
+    {
+      provide: TRAINING_REPOSITORY,
+      useClass: TrainingsRepositoryMemory,
+    },
   ],
   exports: [
     PRISMA_SERVICE,
@@ -48,6 +54,7 @@ import { MovimentRepositoryPrisma } from '../../moviments/repositories/moviments
     MUSCLE_REPOSITORY,
     EQUIPMENT_REPOSITORY,
     MOVIMENT_REPOSITORY,
+    TRAINING_REPOSITORY,
   ],
 })
 export class DatasourceModule {}

@@ -1,0 +1,46 @@
+import { Equipment } from '../../equipments/entities/equipment.entity';
+import { Moviment } from '../../moviments/entities/moviment.entity';
+import { Grip } from './grip.enum';
+
+export class Exercise {
+  readonly equipments: Equipment[] = [];
+
+  constructor(
+    readonly id: string,
+    readonly moviment: Moviment,
+    equipment: Equipment | Equipment[] = [],
+    readonly grip?: Grip,
+  ) {
+    this.equipments = Array.isArray(equipment) ? equipment : [equipment];
+  }
+
+  toString(): string {
+    const equipmentsText =
+      this.equipments.length > 0
+        ? ` ${this.equipments.map((equipment) => equipment.name).join(' ou ')}`
+        : '';
+
+    const gripText = this.grip ? ` (${this.translateGrip(this.grip)})` : '';
+
+    return `${this.moviment.name}${equipmentsText}${gripText}`;
+  }
+
+  toJSON() {
+    return {
+      moviment: this.moviment.toJSON(),
+      equipments: this.equipments.map((equipment) => equipment.toJSON()),
+      grip: this.grip,
+    };
+  }
+
+  private translateGrip(grip: Grip): string {
+    switch (grip) {
+      case Grip.neutral:
+        return 'Pegada Neutra';
+      case Grip.pronated:
+        return 'Pronada';
+      case Grip.supinated:
+        return 'Supinada';
+    }
+  }
+}

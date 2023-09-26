@@ -4,4 +4,9 @@ import { EquipmentsRepository } from './equipments.repository';
 
 export class EquipmentsRepositoryMemory
   extends RepositoryMemory<Equipment>
-  implements EquipmentsRepository {}
+  implements EquipmentsRepository
+{
+  async findByIds(ids: string[]): Promise<Equipment[]> {
+    return this.items.filter((equipment) => ids.includes(equipment.id));
+  }
+}

@@ -12,13 +12,13 @@ datasource db {
 }
 
 model Admin {
-  id       String         @id @default(uuid())
-  email    String         @unique
-  name     String
-  password String
-  sessions AdminSession[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id        String         @id @default(uuid())
+  email     String         @unique
+  name      String
+  password  String
+  sessions  AdminSession[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now()) @updatedAt
 }
 
 model AdminSession {
@@ -28,29 +28,66 @@ model AdminSession {
   expiresIn   Int
   user        Admin     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      String
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
 }
 
 model Muscle {
-  id       String     @id @default(uuid())
-  name     String     @unique
+  id        String     @id @default(uuid())
+  name      String     @unique
   moviments Moviment[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
 }
 
 model Equipment {
-  id   String @id @default(uuid())
-  name String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id        String     @id @default(uuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+  exercises Exercise[]
 }
 
 model Moviment {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  muscle    Muscle   @relation(fields: [muscleId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id        String     @id @default(uuid())
+  name      String     @unique
+  muscle    Muscle     @relation(fields: [muscleId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
   muscleId  String
+  exercise  Exercise[]
+}
+
+model Training {
+  id           String        @id @default(uuid())
+  exerciseSets ExerciseSet[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+}
+
+model ExerciseSet {
+  id          String     @id @default(uuid())
+  training    Training   @relation(fields: [trainingId], references: [id])
+  trainingId  String
+  exercise    Exercise[]
+  sets        Int
+  repetitions Int
+  restTime    Int?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+}
+
+enum Grip {
+  SUPINATED
+  PRONATED
+  NEUTRAL
+}
+
+model Exercise {
+  id            String      @id @default(uuid())
+  moviment      Moviment    @relation(fields: [movimentId], references: [id])
+  movimentId    String
+  equipments    Equipment[]
+  grip          Grip? 
+  exerciseSet   ExerciseSet @relation(fields: [exerciseSetId], references: [id])
+  exerciseSetId String
 }

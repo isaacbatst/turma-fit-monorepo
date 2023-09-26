@@ -1,9 +1,27 @@
 import { PrismaErrorAdapter } from '../../../common/adapters/prisma-errors.adapter';
 import { RepositoryPrisma } from '../../../common/repositories/repository.prisma';
 import { Equipment } from '../entities/equipment.entity';
+import { EquipmentsRepository } from './equipments.repository';
 
-export class EquipmentsRepositoryPrisma extends RepositoryPrisma<Equipment> {
+export class EquipmentsRepositoryPrisma
+  extends RepositoryPrisma<Equipment>
+  implements EquipmentsRepository
+{
   errorAdapter = new PrismaErrorAdapter('equipment');
+
+  async findByIds(ids: string[]): Promise<Equipment[]> {
+    const equipments = await this.prisma.equipment.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    return equipments.map(
+      (equipment) => new Equipment(equipment.id, equipment.name),
+    );
+  }
 
   protected async unhandledCreate(item: Equipment): Promise<void> {
     await this.prisma.equipment.create({
