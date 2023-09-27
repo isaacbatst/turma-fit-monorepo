@@ -17,3 +17,5 @@ services:
       service: dashboard
     build: 
       target: runner
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
