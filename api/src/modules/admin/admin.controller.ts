@@ -35,13 +35,15 @@ export class AdminController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { token } = await this.adminService.login(loginAdminDto);
+    console.log('env', process.env.NODE_ENV);
+    console.log('cookie domain', process.env.COOKIE_DOMAIN);
     res.cookie(DASHBOARD_AUTH_COOKIE, token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       secure: process.env.NODE_ENV === 'production',
       domain:
         process.env.NODE_ENV === 'production'
-          ? process.env.DASHBOARD_URL
+          ? process.env.COOKIE_DOMAIN
           : undefined,
       path: '/',
     });
@@ -57,7 +59,7 @@ export class AdminController {
       secure: process.env.NODE_ENV === 'production',
       domain:
         process.env.NODE_ENV === 'production'
-          ? process.env.DASHBOARD_URL
+          ? process.env.COOKIE_DOMAIN
           : undefined,
       path: '/',
     });
