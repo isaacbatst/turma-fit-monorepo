@@ -19,7 +19,7 @@ const gripToFriendlyName = (grip: Grip) => {
 
 const ExerciseSetItem = ({exerciseSet}: Props) => {
   return (
-    <li className='flex gap-2'>
+    <li className='flex gap-2 bg-slate-900 bg-opacity-40 p-2 border border-slate-700 rounded-lg justify-between'>
       <p>
         {exerciseSet.exercises.map(exercise => {
           const exerciseName = `${exercise.moviment.name}${exercise.grip ? ` ${gripToFriendlyName(exercise.grip)}` : ''}`

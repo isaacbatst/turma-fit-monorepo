@@ -51,7 +51,7 @@ const TrainingItem = ({training}: Props) => {
   }
   return (
     <div className='flex flex-col gap-3'>
-      <ul>
+      <ul className='flex flex-col gap-3'>
         {training.exerciseSets.map((exerciseSet) => (
           <ExerciseSetItem key={exerciseSet.id} exerciseSet={exerciseSet} />
         ))}
