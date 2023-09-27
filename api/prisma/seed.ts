@@ -17,7 +17,7 @@ async function main() {
       { name: 'Barra Reta' },
       { name: 'Barra W' },
       { name: 'Anilha' },
-      { name: 'Halter' },
+      { name: 'Halteres' },
       { name: 'Máquina' },
     ],
   });
@@ -27,7 +27,7 @@ async function main() {
         name: 'Bíceps',
         moviments: {
           createMany: {
-            data: [{ name: 'Rosca direta' }, { name: 'Rosca alternada' }],
+            data: [{ name: 'Rosca Direta' }, { name: 'Rosca Alternada' }],
           },
         },
       },
@@ -38,9 +38,9 @@ async function main() {
         moviments: {
           createMany: {
             data: [
-              { name: 'Tríceps testa' },
-              { name: 'Tríceps francês' },
-              { name: 'Tríceps coice' },
+              { name: 'Tríceps Testa' },
+              { name: 'Tríceps Francês' },
+              { name: 'Tríceps Coice' },
             ],
           },
         },
