@@ -28,6 +28,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       DASHBOARD_URL: ${DASHBOARD_URL}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
   dashboard:
     build:
       context: ./dashboard
