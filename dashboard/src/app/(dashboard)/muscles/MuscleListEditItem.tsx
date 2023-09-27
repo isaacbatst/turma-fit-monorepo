@@ -1,7 +1,9 @@
 import React from 'react'
-import { toast } from 'react-toastify'
 import { useSWRConfig } from 'swr'
+import { ErrorHandler } from '../../../errors/ErrorHandler'
+import { useSubmitForm } from '../../../hooks/useSubmitForm'
 import { Muscle } from '../../../types/Muscle'
+import { useApiGateway } from '../../components/ApiGatewayContext'
 import EditButtons from '../../components/EditButtons'
 import InputEdit from '../../components/InputEdit'
 
@@ -10,47 +12,32 @@ type Props = {
   finishEdit(): void
 }
 
-const editMuscleErrors: Record<string, string> = {
-  'DUPLICATED_NAME': 'Já existe um músculo com esse nome',
-  'REQUIRED_NAME': 'O nome é obrigatório',
-  'NOT_FOUND': 'Músculo não encontrado',
+class EditMuscleErrorHandler extends ErrorHandler {
+  protected formErrorMessages: Record<string, string> = {
+    'DUPLICATED_NAME': 'Já existe um músculo com esse nome',
+    'REQUIRED_NAME': 'O nome é obrigatório',
+  }
+  protected responseErrorMessages: Record<number, (error: string) => string | undefined> = {
+    404: () => 'Músculo não encontrado',
+    409: () => 'Já existe um músculo com esse nome',
+  }
 }
 
 const MuscleListEditItem = ({muscle, finishEdit}: Props) => {
   const {mutate} = useSWRConfig()
   const [name, setName] = React.useState(muscle.name)
-  const [isLoading, setIsLoading] = React.useState(false)
+  const apiGateway = useApiGateway()
+
+  const {isSubmitting, submit} = useSubmitForm({
+    validateAndFetch: () => apiGateway.muscles.editMuscle(muscle.id, name),
+    errorHandler: new EditMuscleErrorHandler()
+  })
 
   const submitEdit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
-    try {
-      setIsLoading(true)
-      const response = await fetch(`http://localhost:5555/muscles/${muscle.id}`, {
-        body: JSON.stringify({
-          name
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'PATCH',
-        credentials: 'include',
-      })
-
-      if(response.status === 204) {
-        await mutate('muscles')
-        finishEdit()
-        return
-      }
-      const data = await response.json();
-      const error = editMuscleErrors[data.message]
-      toast.error(error, {
-        theme: 'dark',
-        position: 'bottom-right',
-        autoClose: 3000,
-      })
-    } finally {
-      setIsLoading(false)
-    }
+    await submit()
+    await mutate('muscles')
+    finishEdit()
   } 
 
   return (
@@ -66,7 +53,7 @@ const MuscleListEditItem = ({muscle, finishEdit}: Props) => {
         />
         <EditButtons 
           finishEdit={finishEdit}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
         />
       </form>
     </li>

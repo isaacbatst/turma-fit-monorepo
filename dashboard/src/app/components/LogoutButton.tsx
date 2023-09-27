@@ -1,12 +1,12 @@
 'use client'
 import React from 'react'
 import { MdLogout } from 'react-icons/md'
+import { useApiGateway } from './ApiGatewayContext'
 
 const LogoutButton = () => {
+  const apiGateway = useApiGateway()
   const logout = async () => {
-    await fetch('/api/logout', {
-      method: 'POST'
-    })
+    await apiGateway.auth.logout()
     window.location.href = '/login'
   }
 

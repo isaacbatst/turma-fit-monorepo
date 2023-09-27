@@ -1,6 +1,6 @@
+import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { FormError } from "./FormError";
-import { ResponseError } from "./ResponseError";
 
 export abstract class ErrorHandler {
   private static unknownErrorMessage = 'Erro desconhecido. Por favor, tente novamente mais tarde';
@@ -17,12 +17,17 @@ export abstract class ErrorHandler {
   protected abstract responseErrorMessages: Record<number, (error: string) => string | undefined>;
 
   getMessage(error: unknown): string {
-    console.log(error)
     if (error instanceof FormError && error.message in this.formErrorMessages) {
       return this.formErrorMessages[error.message] 
     } 
-    if (error instanceof ResponseError && error.status in this.responseErrorMessages) {
-      return this.responseErrorMessages[error.status](error.message) || ErrorHandler.unknownErrorMessage;
+
+    if(error instanceof AxiosError && error.response?.status === 400 && error.message in this.formErrorMessages) {
+      return this.formErrorMessages[error.response.data.message]
+    }
+
+    if(error instanceof AxiosError && error.response && error.response.status in this.responseErrorMessages) {
+      const message = Array.isArray(error.response.data.message) ? error.response.data.message[0] : error.response.data.message;
+      return this.responseErrorMessages[error.response.status](message) || ErrorHandler.unknownErrorMessage;
     }
     
     return ErrorHandler.unknownErrorMessage;

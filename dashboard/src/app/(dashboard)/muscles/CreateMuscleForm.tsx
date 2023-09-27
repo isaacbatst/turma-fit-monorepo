@@ -2,54 +2,28 @@
 import React from 'react';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { useSWRConfig } from 'swr';
-import Loading from '../../components/Loading';
-import { toast } from 'react-toastify';
+import { useApiGateway } from '../../components/ApiGatewayContext';
 import InputCreate from '../../components/InputCreate';
+import Loading from '../../components/Loading';
+import { CreateMuscleErrorHandler } from './CreateMuscleErrorHandler';
+import { useSubmitForm } from '../../../hooks/useSubmitForm';
 
-const postMuscle = async (name: string) => {
-  return fetch('http://localhost:5555/muscles', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ name }),
-    credentials: 'include',
-  });
-
-}
-
-const postMuscleErrors: Record<number, string> = {
-  409: 'Músculo já cadastrado',
-  400: 'Nome inválido',
-}
+const errorHandler = new CreateMuscleErrorHandler()
 
 const CreateMuscleForm: React.FC = () => {
   const [name, setName] = React.useState('')
-  const [isLoading, setIsLoading] = React.useState(false)
   const {mutate} = useSWRConfig()
+  const apiGateway = useApiGateway()
+  const {submit, isSubmitting} = useSubmitForm({
+    errorHandler,
+    validateAndFetch: () => apiGateway.muscles.createMuscle(name),
+  })
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    try {
-      setIsLoading(true)
-      const response = await postMuscle(name)
-
-      if(response.status === 201){
-        setName('')
-        await mutate('muscles')
-        return
-      }
-
-      const error = postMuscleErrors[response.status] || 'Erro desconhecido'
-      toast.error(error, {
-        theme: 'dark',
-        position: 'bottom-right',
-        autoClose: 3000,
-      })
-    } finally {
-      setIsLoading(false)
-    }
+    await submit()
+    setName('')
+    await mutate('muscles')
   }
 
   return  <li className='flex'>
@@ -64,7 +38,7 @@ const CreateMuscleForm: React.FC = () => {
       />
       <button type="submit" title="Salvar" className="bg-amber-500 text-white px-6 py-3 rounded-lg">
         {
-          isLoading ? <Loading /> : <AiOutlineCheck size={24} />
+          isSubmitting ? <Loading /> : <AiOutlineCheck size={24} />
         }
       </button>
     </form>

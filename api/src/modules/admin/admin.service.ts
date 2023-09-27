@@ -88,7 +88,7 @@ export class AdminService {
     if (!session) throw new NotFoundException('Session not found');
     const admin = await this.repository.findById(session.getUserId());
     if (!admin) throw new NotFoundException('Admin not found');
-    return admin;
+    return admin.toJSON();
   }
 
   findAll() {

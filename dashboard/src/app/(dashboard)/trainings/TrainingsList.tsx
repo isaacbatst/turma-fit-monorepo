@@ -1,8 +1,9 @@
 'use client'
 import { Collapse, CollapseProps } from 'antd'
-import { useState } from 'react'
 import { useSWRConfig } from 'swr'
+import { useSubmitForm } from '../../../hooks/useSubmitForm'
 import { useTrainings } from '../../../hooks/useTrainings'
+import { useApiGateway } from '../../components/ApiGatewayContext'
 import Loading from '../../components/Loading'
 import { CreateMovimentFormErrorHandler } from '../moviments/CreateMovimentFormErrorHandler'
 import TrainingItem from './TrainingItem'
@@ -11,27 +12,16 @@ const errorHandler = new CreateMovimentFormErrorHandler()
 
 const TrainingsList = () => {
   const {trainings, isLoading} = useTrainings()
-  const [isCreating, setIsCreating] = useState(false)
   const {mutate} = useSWRConfig()
-  
-  const onCreateTraining = async () => {
-    try {
-      setIsCreating(true)
-      const response = await fetch('http://localhost:5555/trainings', {
-        method: 'POST',
-        credentials: 'include',
-      })
+  const apiGateway = useApiGateway()
+  const {isSubmitting, submit} = useSubmitForm({
+    errorHandler,
+    validateAndFetch: () => apiGateway.training.createTraining(),
+  })
 
-      if (!response.ok) {
-        throw new Error('Não foi possível criar o treino.')
-      }
-      await mutate('trainings')
-    } catch (error) {
-      const message = errorHandler.getMessage(error)
-      errorHandler.showToast(message)
-    } finally {
-      setIsCreating(false)
-    }
+  const onCreateTraining = async () => {
+    await submit()
+    await mutate('trainings')
   }
 
   const collapseItems: CollapseProps['items'] = trainings?.map((training) => {
@@ -61,12 +51,12 @@ const TrainingsList = () => {
       <button 
         type='button'
         onClick={onCreateTraining}
-        disabled={isCreating}
+        disabled={isSubmitting}
         className='px-5 py-2
             flex justify-center items-center
             w-48  h-12
             rounded-lg bg-amber-500 hover:scale-105 active:opacity-80'>
-        {isCreating  ? <Loading color='white' /> : createButtonText}
+        {isSubmitting  ? <Loading color='white' /> : createButtonText}
       </button>
       {isLoading && (
         <div className="flex justify-center">

@@ -1,4 +1,3 @@
-import { ToastContainer } from "react-toastify"
 import AppHeader from "../components/AppHeader"
 import DashBody from "../components/DashBody"
 import Sidebar from "../components/Sidebar"
@@ -19,7 +18,6 @@ export default function DashboardLayout({
             {children}
           </DashBody>
         </section>
-        <ToastContainer />
       </main>
     </ThemeProvider>
   )

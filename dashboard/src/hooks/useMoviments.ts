@@ -1,21 +1,9 @@
 import useSWR from "swr";
-import { Moviment } from "../types/Moviment";
-
-export const fetchMoviments = async () => {
-  const response = await fetch('http://localhost:5555/moviments', {
-    credentials: 'include'
-  });
-
-  if (response.status >= 400) {
-    return []
-  }
-
-  const data = await response.json() as Moviment[];
-  return data;
-}
+import { useApiGateway } from "../app/components/ApiGatewayContext";
 
 export const useMoviments = () => {
-  const { data, error, isLoading, mutate } = useSWR('moviments', fetchMoviments)
+  const apiGateway = useApiGateway()
+  const { data, error, isLoading, mutate } = useSWR('moviments', () => apiGateway.moviments.getMoviments())
   return {
     moviments: data,
     isLoading,

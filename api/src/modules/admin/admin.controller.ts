@@ -47,6 +47,22 @@ export class AdminController {
     });
   }
 
+  @HttpCode(200)
+  @Post('/logout')
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const token = req.cookies[DASHBOARD_AUTH_COOKIE];
+    await this.adminService.logout(token);
+    res.clearCookie(DASHBOARD_AUTH_COOKIE, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      domain:
+        process.env.NODE_ENV === 'production'
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
+      path: '/',
+    });
+  }
+
   @Get('/me')
   findMe(@Req() req: Request) {
     return this.adminService.findMe(req.cookies[DASHBOARD_AUTH_COOKIE]);

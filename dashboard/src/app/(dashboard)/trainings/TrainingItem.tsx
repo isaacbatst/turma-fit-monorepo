@@ -1,10 +1,10 @@
 import { Form, Modal } from 'antd'
 import React from 'react'
-import { ResponseError } from '../../../errors/ResponseError'
+import { useSWRConfig } from 'swr'
 import { Training } from '../../../types/Training'
+import { useApiGateway } from '../../components/ApiGatewayContext'
 import { AddExerciseErrorHandler } from './AddExerciseErrorHandler'
 import AddExerciseForm, { AddExerciseFormValues } from './AddExerciseForm'
-import { useSWRConfig } from 'swr'
 import ExerciseSetItem from './ExerciseSetItem'
 
 type Props = {
@@ -16,32 +16,23 @@ const addExerciseErrorHandler = new AddExerciseErrorHandler()
 const TrainingItem = ({training}: Props) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false)
   const [addExerciseForm] = Form.useForm<AddExerciseFormValues>()
+  const apiGateway = useApiGateway()
   const {mutate} = useSWRConfig()
 
   const submitAddExerciseForm = async () => {
     try {
       const values = addExerciseForm.getFieldsValue()
       await addExerciseForm.validateFields()
-      const response = await fetch(`http://localhost:5555/trainings/${training.id}/add-exercise-set`, {
-        method: 'PATCH',
-        credentials: 'include',
-        body: JSON.stringify({
-          repetitions: values.repetitions,
-          sets: values.sets,
-          exercise: {
-            movimentId: values.moviment,
-            equipmentIds: values.equipment,
-            grip: values.grip,
-          }
-        }),
-        headers: {
-          'Content-Type': 'application/json',
+      await apiGateway.training.addExerciseSet({
+        trainingId: training.id,
+        repetitions: values.repetitions,
+        sets: values.sets,
+        exercise: {
+          movimentId: values.moviment,
+          equipmentIds: values.equipment,
+          grip: values.grip,
         }
       })
-      if(response.status !== 204) {
-        const data = await response.json()
-        throw new ResponseError(data.message, response.status)
-      }
       mutate('trainings')
       setIsModalVisible(false)
     } catch (error) {

@@ -1,6 +1,6 @@
 import SectionTitle from "../../components/SectionTitle";
 import CreateMovimentForm from "./CreateMovimentForm";
-import MovimentsList from "./MusclesList";
+import MovimentsList from "./MovimentList";
 
 export default function Moviments() {
   return (

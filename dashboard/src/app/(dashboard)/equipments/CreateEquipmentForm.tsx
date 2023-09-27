@@ -2,54 +2,28 @@
 import React from 'react';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { useSWRConfig } from 'swr';
-import Loading from '../../components/Loading';
-import { toast } from 'react-toastify';
+import { useSubmitForm } from '../../../hooks/useSubmitForm';
+import { useApiGateway } from '../../components/ApiGatewayContext';
 import InputCreate from '../../components/InputCreate';
+import Loading from '../../components/Loading';
+import { CreateEquipmentErrorHandler } from './CreateEquipmentErrorHandler';
 
-const post = async (name: string) => {
-  return fetch('http://localhost:5555/equipments', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ name }),
-    credentials: 'include',
-  });
-
-}
-
-const errors: Record<number, string> = {
-  409: 'Equipamento já cadastrado',
-  400: 'Nome inválido',
-}
+const errorHandler = new CreateEquipmentErrorHandler()
 
 const CreateEquipmentForm: React.FC = () => {
   const [name, setName] = React.useState('')
-  const [isLoading, setIsLoading] = React.useState(false)
+  const apiGateway = useApiGateway()
   const {mutate} = useSWRConfig()
+  const {isSubmitting, submit} = useSubmitForm({
+    validateAndFetch: () => apiGateway.equipments.createEquipment(name),
+    errorHandler
+  })
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    try {
-      setIsLoading(true)
-      const response = await post(name)
-
-      if(response.status === 201){
-        setName('')
-        await mutate('equipments')
-        return
-      }
-
-      const error = errors[response.status] || 'Erro desconhecido'
-      toast.error(error, {
-        theme: 'dark',
-        position: 'bottom-right',
-        autoClose: 3000,
-      })
-    } finally {
-      setIsLoading(false)
-    }
+    await submit()
+    await mutate('equipments')
+    setName('')
   }
 
   return  <li className='flex'>
@@ -64,7 +38,7 @@ const CreateEquipmentForm: React.FC = () => {
       />
       <button type="submit" title="Salvar" className="bg-amber-500 text-white px-6 py-3 rounded-lg">
         {
-          isLoading ? <Loading /> : <AiOutlineCheck size={24} />
+          isSubmitting ? <Loading /> : <AiOutlineCheck size={24} />
         }
       </button>
     </form>

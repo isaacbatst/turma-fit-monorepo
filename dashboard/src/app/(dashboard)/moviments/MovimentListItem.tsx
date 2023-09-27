@@ -2,7 +2,8 @@ import { Moviment } from '@/types/Moviment'
 import React from 'react'
 import { useSWRConfig } from 'swr'
 import { ErrorHandler } from '../../../errors/ErrorHandler'
-import { ResponseError } from '../../../errors/ResponseError'
+import { useSubmitForm } from '../../../hooks/useSubmitForm'
+import { useApiGateway } from '../../components/ApiGatewayContext'
 import MovimentListItemEdit from './MovimentListItemEdit'
 import MovimentListItemView from './MovimentListItemView'
 
@@ -11,39 +12,27 @@ type Props = {
   index: number
 }
 
+class DeleteMovimentErrorHandler extends ErrorHandler {
+  protected formErrorMessages: Record<string, string> = {}
+  protected responseErrorMessages: Record<number, (error: string) => string | undefined> = {
+    404: () => 'Movimento não encontrado',
+  }
+}
+
 const MovimentListItem = ({moviment, index}: Props) => {
   const [isEditing, setIsEditing] = React.useState(false)
-  const [isDeleting, setIsDeleting] = React.useState(false)
+  const apiGateway = useApiGateway()
   const {mutate} = useSWRConfig()
+  const {isSubmitting: isDeleting, submit} = useSubmitForm({
+    validateAndFetch: () => apiGateway.moviments.deleteMoviment(moviment.id),
+    errorHandler: new DeleteMovimentErrorHandler()
+  })
 
   const deleteMoviment = async () => {
-    try {
-      setIsDeleting(true)
-      const response = await fetch(`http://localhost:5555/moviments/${moviment.id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      })
-
-      
-      if(response.status !== 204){
-        const data = await response.json()
-        throw new ResponseError(data.message, response.status)
-      }
-
-      await mutate('moviments')
-    } catch (error) {
-      console.log(error)
-      const message = error instanceof ResponseError && error.status === 404
-        ? 'Movimento não encontrado'
-        : 'Erro ao excluir movimento'
-
-      ErrorHandler.showToast(message)
-    } finally {
-      setIsDeleting(false)
-    }
+    await submit()
+    await mutate('moviments')
   }
     
-
   return (
     <li 
       className='relative flex flex-col gap-3 

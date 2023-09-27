@@ -33,4 +33,12 @@ export class Admin {
   getName(): string {
     return this.name;
   }
+
+  toJSON() {
+    return {
+      email: this.email,
+      id: this.id,
+      name: this.name,
+    };
+  }
 }

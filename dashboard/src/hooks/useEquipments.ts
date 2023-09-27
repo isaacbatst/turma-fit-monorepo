@@ -1,21 +1,9 @@
-import useSWR from "swr"
-import { Equipment } from "../types/Equipment";
-
-const fetchEquipments = async () => {
-  const response = await fetch('http://localhost:5555/equipments', {
-    credentials: 'include'
-  });
-
-  if (response.status >= 400) {
-    return []
-  }
-
-  const data = await response.json() as Equipment[];
-  return data;
-}
+import useSWR from "swr";
+import { useApiGateway } from "../app/components/ApiGatewayContext";
 
 export const useEquipments = () => {
-  const { data, error, isLoading, mutate } = useSWR('equipments', fetchEquipments)
+  const apiGateway = useApiGateway()
+  const { data, error, isLoading, mutate } = useSWR('equipments', () => apiGateway.equipments.getEquipments())
   return {
     equipments: data,
     isLoading,

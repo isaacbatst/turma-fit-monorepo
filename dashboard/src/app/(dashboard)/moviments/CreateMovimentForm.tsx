@@ -2,56 +2,39 @@
 import React from 'react'
 import { useSWRConfig } from 'swr'
 import { FormError } from '../../../errors/FormError'
-import { ResponseError } from '../../../errors/ResponseError'
+import { useApiGateway } from '../../components/ApiGatewayContext'
 import InputCreate from '../../components/InputCreate'
 import Loading from '../../components/Loading'
 import { CreateMovimentFormErrorHandler } from './CreateMovimentFormErrorHandler'
 import MuscleSelect from './MuscleSelect'
-
-const postMoviment = async (name: string, muscleId: string) => {
-  return fetch('http://localhost:5555/moviments', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ name, muscleId }),
-    credentials: 'include',
-  });
-}
+import { useSubmitForm } from '../../../hooks/useSubmitForm'
 
 const errorHandler = new CreateMovimentFormErrorHandler()
 
 const CreateMovimentForm = () => {
   const {mutate} = useSWRConfig()
+  const apiGateway = useApiGateway()
   const [name, setName] = React.useState('')
   const [selectedMuscle, setSelectedMuscle] = React.useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
-
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
+  const {submit, isSubmitting} = useSubmitForm({
+    errorHandler,
+    validateAndFetch: async () => {
       if(!name){
         throw new FormError('REQUIRED_NAME')
       }
       if(!selectedMuscle){
         throw new FormError('REQUIRED_MUSCLE_ID')
       }
-      setIsSubmitting(true)
-      const response = await postMoviment(name, selectedMuscle)
-      const data = await response.json()
-      if(response.status !== 201) {
-        throw new ResponseError(data.message, response.status)
-      }
-  
-      setName('')
-      setSelectedMuscle(null)
-      await mutate('moviments')
-    } catch(err) {
-      const error = errorHandler.getMessage(err)
-      errorHandler.showToast(error)
-    } finally {
-      setIsSubmitting(false)
+      await apiGateway.moviments.createMoviment(name, selectedMuscle)
     }
+  })
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await submit()
+    await mutate('moviments')
+    setName('')
+    setSelectedMuscle(null)
   }
   
   

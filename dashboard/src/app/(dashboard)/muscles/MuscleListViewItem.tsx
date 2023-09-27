@@ -1,7 +1,8 @@
 import { Muscle } from '@/types/Muscle'
-import { useState } from 'react'
-import { toast } from 'react-toastify'
 import { useSWRConfig } from 'swr'
+import { ErrorHandler } from '../../../errors/ErrorHandler'
+import { useSubmitForm } from '../../../hooks/useSubmitForm'
+import { useApiGateway } from '../../components/ApiGatewayContext'
 import ListViewItem from '../../components/ListViewItem'
 
 type Props = {
@@ -9,35 +10,23 @@ type Props = {
   startEdit: () => void
 }
 
-const deleteMuscleErrors: Record<number, string> = {
-  404: 'Músculo não encontrado',
+class DeleteMuscleErrorHandler extends ErrorHandler {
+  protected formErrorMessages: Record<string, string> = {}
+  protected responseErrorMessages: Record<number, (error: string) => string | undefined> = {
+    404: () => 'Músculo não encontrado',
+  }
 }
 
 const MuscleListViewItem = ({muscle, startEdit}: Props) => {
-  const [isDeleting, setIsDeleting] = useState(false)
   const {mutate} = useSWRConfig()
+  const apiGateway = useApiGateway()
+  const {isSubmitting: isDeleting, submit} = useSubmitForm({
+    validateAndFetch: () => apiGateway.muscles.deleteMuscle(muscle.id),
+    errorHandler: new DeleteMuscleErrorHandler(),
+  })
   const onDelete = async () => {
-    try {
-      setIsDeleting(true)
-      const response = await fetch(`http://localhost:5555/muscles/${muscle.id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      })
-
-      if(response.status === 204){
-        await mutate('muscles')
-        return
-      }
-
-      const error = deleteMuscleErrors[response.status] ?? 'Erro ao excluir músculo'
-      toast.error(error, {
-        theme: 'dark',
-        position: 'bottom-right',
-        autoClose: 3000,
-      })
-    } finally {
-      setIsDeleting(false)
-    }
+    await submit()
+    await mutate('muscles')
   }
 
   return (

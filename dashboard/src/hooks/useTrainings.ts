@@ -1,22 +1,9 @@
 import useSWR from "swr";
-import { Training } from "../types/Training";
-
-export const fetchTrainings = async () => {
-  const response = await fetch('http://localhost:5555/trainings', {
-    credentials: 'include',
-    cache: 'no-store',
-  });
-
-  if (response.status >= 400) {
-    return []
-  }
-
-  const data = await response.json() as Training[];
-  return data;
-}
+import { useApiGateway } from "../app/components/ApiGatewayContext";
 
 export const useTrainings = () => {
-  const { data, error, isLoading, mutate } = useSWR('trainings', fetchTrainings)
+  const apiGateway = useApiGateway()
+  const { data, error, isLoading, mutate } = useSWR('trainings', () => apiGateway.training.getTrainings())
   return {
     trainings: data,
     isLoading,

@@ -1,28 +1,23 @@
 'use client'
 import { MouseEventHandler, useState } from 'react'
+import { useApiGateway } from '../components/ApiGatewayContext'
+import { LoginErrorHandler } from './LoginErrorHandler'
+
+const errorHandler = new LoginErrorHandler()
 
 const LoginForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const apiGateway = useApiGateway()
   
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     try {
       e.preventDefault()
-      const response = await fetch('http://localhost:5555/admin/login', {
-        cache: 'no-store',
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-
-      if(response.status === 200) {
-        window.location.href = '/'
-      }
+      await apiGateway.auth.login(email, password)
+      window.location.href = '/'
     } catch(err) {
-      console.error(err)
+      const message = errorHandler.getMessage(err)
+      errorHandler.showToast(message)
     }
   }
 
