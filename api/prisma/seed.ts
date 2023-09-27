@@ -14,7 +14,8 @@ async function main() {
   });
   await prisma.equipment.createMany({
     data: [
-      { name: 'Barra' },
+      { name: 'Barra Reta' },
+      { name: 'Barra W' },
       { name: 'Anilha' },
       { name: 'Halter' },
       { name: 'Máquina' },

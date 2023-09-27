@@ -21,7 +21,6 @@ export const createTraining = async (app: INestApplication, token: string) => {
     .post('/moviments')
     .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
     .send({ name: 'Supino Reto', muscleId: createMuscleResponse.body.id });
-  console.log(createMovimentResponse.body);
   expect(createMovimentResponse.status).toBe(201);
   expect(createMovimentResponse.body.id).toBeDefined();
 

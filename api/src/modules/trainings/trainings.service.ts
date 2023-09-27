@@ -55,7 +55,7 @@ export class TrainingsService {
       input.exercise.grip,
     );
     const setId = this.idGenerator.generate();
-    const exerciseSet = training.addExercise(
+    const exerciseSet = training.addExerciseSet(
       setId,
       exercise,
       input.sets,

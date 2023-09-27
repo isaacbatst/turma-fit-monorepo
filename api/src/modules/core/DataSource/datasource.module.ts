@@ -10,11 +10,11 @@ import {
 } from '../../../constants/tokens';
 import { AdminRepositoryPrisma } from '../../admin/repositories/admin.repository.prisma';
 import { AdminSessionRepositoryPrisma } from '../../admin/repositories/admin.session.repository.prisma';
-import { PrismaService } from './prisma.service';
-import { MusclesRepositoryPrisma } from '../../muscles/repositories/mucles.repository.prisma';
 import { EquipmentsRepositoryPrisma } from '../../equipments/repositories/equipments.repository.prisma';
 import { MovimentRepositoryPrisma } from '../../moviments/repositories/moviments.repository.prisma';
-import { TrainingsRepositoryMemory } from '../../trainings/repositories/trainings.repository.memory';
+import { MusclesRepositoryPrisma } from '../../muscles/repositories/mucles.repository.prisma';
+import { TrainingsRepositoryPrisma } from '../../trainings/repositories/trainings.repository.prisma';
+import { PrismaService } from './prisma.service';
 
 @Module({
   providers: [
@@ -44,7 +44,7 @@ import { TrainingsRepositoryMemory } from '../../trainings/repositories/training
     },
     {
       provide: TRAINING_REPOSITORY,
-      useClass: TrainingsRepositoryMemory,
+      useClass: TrainingsRepositoryPrisma,
     },
   ],
   exports: [

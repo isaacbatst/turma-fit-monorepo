@@ -17,6 +17,7 @@ export class ExerciseSet {
 
   toJSON() {
     return {
+      id: this.id,
       exercises: this.exercises.map((exercise) => exercise.toJSON()),
       sets: this.sets,
       repetitions: this.repetitions,

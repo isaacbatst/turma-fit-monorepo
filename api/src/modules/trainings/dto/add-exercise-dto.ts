@@ -22,6 +22,7 @@ class Exercise {
 
 export class AddExerciseDto {
   @ValidateNested()
+  @IsNotEmpty({ message: 'REQUIRED_EXERCISE' })
   @Type(() => Exercise)
   exercise: Exercise;
   @IsNotEmpty({ message: 'REQUIRED_SETS' })

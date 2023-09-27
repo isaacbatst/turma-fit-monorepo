@@ -4,6 +4,7 @@ import { AiOutlineHome } from 'react-icons/ai'
 import { CgGym } from 'react-icons/cg'
 import { GiMuscleUp } from 'react-icons/gi'
 import { MdSportsGymnastics } from 'react-icons/md'
+import {BiSpreadsheet} from 'react-icons/bi'
 import LogoutButton from './LogoutButton'
 import SidebarLink from './SidebarLink'
 
@@ -14,6 +15,7 @@ const links = [
   { href: '/muscles', label: 'Músculos', Icon: GiMuscleUp },
   { href: '/equipments', label: 'Equipamentos', Icon: CgGym },
   { href: '/moviments', label: 'Movimentos', Icon: MdSportsGymnastics },
+  { href: '/trainings', label: 'Treinos ', Icon: BiSpreadsheet },
 ]
 
 const Sidebar = () => {

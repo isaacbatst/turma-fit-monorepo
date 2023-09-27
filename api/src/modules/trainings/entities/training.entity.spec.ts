@@ -1,7 +1,6 @@
 import { Equipment } from '../../equipments/entities/equipment.entity';
 import { Moviment } from '../../moviments/entities/moviment.entity';
 import { Muscle } from '../../muscles/entities/muscle.entity';
-import { ExerciseSet } from './exercise-set.entity';
 import { Exercise } from './exercise.entity';
 import { Training } from './training.entity';
 
@@ -27,8 +26,8 @@ describe('Training', () => {
     const barbellCurlExercise = new Exercise('id', barbellCurl, curlBar);
 
     const training = new Training('training-id');
-    training.addExercise('set-id', benchPressExercise, 3, 10);
-    training.addExercise('set-id', barbellCurlExercise, 3, 10);
+    training.addExerciseSet('set-id', benchPressExercise, 3, 10);
+    training.addExerciseSet('set-id', barbellCurlExercise, 3, 10);
 
     expect(training.exerciseSets).toHaveLength(2);
   });
@@ -47,12 +46,10 @@ describe('Training', () => {
     const benchPressExercise = new Exercise('id', benchPress, bar);
     const barbellCurlExercise = new Exercise('id', barbellCurl, curlBar);
 
-    const sets: ExerciseSet[] = [
-      new ExerciseSet('id', benchPressExercise, 3, 10),
-      new ExerciseSet('id', barbellCurlExercise, 3, 10),
-    ];
+    const training = new Training('training-id');
+    training.addExerciseSet('id', benchPressExercise, 3, 10);
+    training.addExerciseSet('id', barbellCurlExercise, 3, 10);
 
-    const training = new Training('training-id', sets);
     const muscles = training.getMuscles();
     expect(muscles).toHaveLength(2);
     expect(muscles[0].name).toBe('Chest');

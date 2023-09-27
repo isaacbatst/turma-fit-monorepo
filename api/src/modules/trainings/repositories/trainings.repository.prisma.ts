@@ -1,16 +1,33 @@
-import { Grip as PrismaGrip } from '@prisma/client';
 import { PrismaErrorAdapter } from '../../../common/adapters/prisma-errors.adapter';
 import { RepositoryPrisma } from '../../../common/repositories/repository.prisma';
 import { ExerciseSet } from '../entities/exercise-set.entity';
 import { Training } from '../entities/training.entity';
+import { TrainingsMapperRepositoryPrisma } from './trainings-mapper.repository.prisma';
 import { TrainingsRepository } from './trainings.repository';
-import { Grip } from '../entities/grip.enum';
 
 export class TrainingsRepositoryPrisma
   extends RepositoryPrisma<Training>
   implements TrainingsRepository
 {
   errorAdapter = new PrismaErrorAdapter('training');
+  mapper = new TrainingsMapperRepositoryPrisma();
+
+  static readonly trainingInclude = {
+    exerciseSets: {
+      include: {
+        exercises: {
+          include: {
+            equipments: true,
+            moviment: {
+              include: {
+                muscle: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
 
   async addExerciseSet(
     training: Training,
@@ -30,6 +47,26 @@ export class TrainingsRepositoryPrisma
           },
         },
       });
+
+      await Promise.all(
+        exerciseSet.exercises.map(async (exercise) => {
+          await this.prisma.exercise.create({
+            data: {
+              id: exercise.id,
+              exerciseSetId: exerciseSet.id,
+              grip: exercise.grip
+                ? this.mapper.mapGripToPrisma(exercise.grip)
+                : undefined,
+              movimentId: exercise.moviment.id,
+              equipments: {
+                connect: exercise.equipments.map((equipment) => ({
+                  id: equipment.id,
+                })),
+              },
+            },
+          });
+        }),
+      );
     } catch (err) {
       this.errorAdapter.adapt(err);
     }
@@ -41,42 +78,36 @@ export class TrainingsRepositoryPrisma
         id: item.id,
       },
     });
-
-    await Promise.all(
-      item.exerciseSets.map((set) => {
-        return this.addExerciseSet(item, set);
-      }),
-    );
-
-    await Promise.all(
-      item.exerciseSets.map((set, index) => {
-        return this.prisma.exercise.createMany({
-          data: item.exerciseSets[index].exercises.map((exercise) => {
-            return {
-              id: exercise.id,
-              grip: exercise.grip ? this.mapGripToPrisma(exercise.grip) : null,
-              exerciseSetId: set.id,
-              movimentId: exercise.moviment.id,
-            };
-          }),
-        });
-      }),
-    );
   }
 
-  protected unhandledFindAll(): Promise<Training[]> {}
-  protected unhandledFindById(id: string): Promise<Training | undefined> {}
-  protected unhandledUpdate(updated: Training): Promise<void> {}
-  protected unhandledRemove(id: string): Promise<void> {}
+  protected async unhandledFindAll(): Promise<Training[]> {
+    const trainings = await this.prisma.training.findMany({
+      include: TrainingsRepositoryPrisma.trainingInclude,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
-  private mapGripToPrisma(grip: Grip): PrismaGrip {
-    switch (grip) {
-      case Grip.supinated:
-        return PrismaGrip.SUPINATED;
-      case Grip.pronated:
-        return PrismaGrip.PRONATED;
-      case Grip.neutral:
-        return PrismaGrip.NEUTRAL;
-    }
+    return trainings.map((training) =>
+      this.mapper.mapTrainingToEntity(training),
+    );
+  }
+  protected async unhandledFindById(id: string): Promise<Training | undefined> {
+    const training = await this.prisma.training.findUnique({
+      where: { id },
+      include: TrainingsRepositoryPrisma.trainingInclude,
+    });
+
+    return training ? this.mapper.mapTrainingToEntity(training) : undefined;
+  }
+
+  protected unhandledUpdate(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  protected async unhandledRemove(id: string): Promise<void> {
+    await this.prisma.training.delete({
+      where: { id },
+    });
   }
 }

@@ -68,7 +68,7 @@ model ExerciseSet {
   id          String     @id @default(uuid())
   training    Training   @relation(fields: [trainingId], references: [id])
   trainingId  String
-  exercise    Exercise[]
+  exercises   Exercise[]
   sets        Int
   repetitions Int
   restTime    Int?
@@ -87,7 +87,7 @@ model Exercise {
   moviment      Moviment    @relation(fields: [movimentId], references: [id])
   movimentId    String
   equipments    Equipment[]
-  grip          Grip? 
+  grip          Grip?
   exerciseSet   ExerciseSet @relation(fields: [exerciseSetId], references: [id])
   exerciseSetId String
 }
