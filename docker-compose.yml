@@ -40,3 +40,4 @@ services:
       - ./dashboard/src:/app/src
     environment:
       API_URL: ${API_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
