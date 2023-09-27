@@ -1,11 +1,10 @@
 'use client'
+import { Collapse, CollapseProps } from 'antd'
+import { useState } from 'react'
 import { useSWRConfig } from 'swr'
 import { useTrainings } from '../../../hooks/useTrainings'
 import Loading from '../../components/Loading'
 import { CreateMovimentFormErrorHandler } from '../moviments/CreateMovimentFormErrorHandler'
-import { useState } from 'react'
-import { sleep } from '../../../lib/sleep'
-import { Collapse, CollapseProps } from 'antd'
 import TrainingItem from './TrainingItem'
 
 const errorHandler = new CreateMovimentFormErrorHandler()
@@ -26,7 +25,6 @@ const TrainingsList = () => {
       if (!response.ok) {
         throw new Error('Não foi possível criar o treino.')
       }
-      await sleep(1000)
       await mutate('trainings')
     } catch (error) {
       const message = errorHandler.getMessage(error)
