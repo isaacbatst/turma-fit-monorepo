@@ -13,7 +13,8 @@ export class ApiGatewayAxios implements ApiGateway {
   readonly muscles: ApiGatewayMuscleAxios
   readonly training: ApiGatewayTrainingAxios
 
-  constructor(baseURL = 'http://localhost:5555') {
+  constructor(baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5555') {
+    console.log('baseURL', baseURL)
     const axiosInstance = axios.create({
       baseURL,
       withCredentials: true,
