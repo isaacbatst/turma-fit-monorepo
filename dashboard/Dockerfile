@@ -14,6 +14,8 @@ CMD ["yarn", "dev"]
 
 FROM dev AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN yarn build
 
 FROM base AS runner
