@@ -19,6 +19,8 @@ async function bootstrap() {
   );
   app.use(cookieParser());
   app.enableShutdownHooks();
+  console.log('Starting app env: ', process.env.NODE_ENV);
   await app.listen(5555);
 }
+
 bootstrap();
