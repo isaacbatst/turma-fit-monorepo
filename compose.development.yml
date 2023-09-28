@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    extends:
+      file: ./compose.yml
+      service: db
+  api:
+    extends:
+      file: ./compose.yml
+      service: api
+    build: 
+      context: ./api
+      target: dev
+    volumes:
+      - ./api/src:/app/src
+      - ./api/test:/app/test
+      - ./api/prisma:/app/prisma
+  dashboard:
+    extends:
+      file: ./compose.yml
+      service: dashboard
+    build: 
+      context: ./dashboard
+      target: dev
+    volumes:
+      - ./dashboard/src:/app/src

@@ -1,4 +1,4 @@
-FROM node:18-alpine as deps
+FROM node:18-alpine as dev
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn --frozen-lockfile
@@ -15,9 +15,10 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . . 
 RUN yarn build
 
-FROM node:18-alpine as runner
+
+FROM node:18-alpine as production
 WORKDIR /app
 ENV NODE_ENV production
+RUN yarn --frozen-lockfile --production
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
 CMD ["node", "dist/main.js"]

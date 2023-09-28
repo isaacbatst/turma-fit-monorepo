@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    extends:
+      file: ./compose.production.yml
+      service: db
+  api:
+    extends:
+      file: ./compose.production.yml
+      service: api
+    build: 
+      context: ./api
+      target: production
+  dashboard:
+    extends:
+      file: ./compose.production.yml
+      service: dashboard
+    build:
+      context: ./dashboard
+      target: production

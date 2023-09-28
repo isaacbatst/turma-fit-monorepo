@@ -18,7 +18,7 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN yarn build
 
-FROM base AS runner
+FROM base AS production
 WORKDIR /app
 ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs

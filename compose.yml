@@ -15,32 +15,20 @@ services:
       timeout: 5s
       retries: 5
   api:
-    build: 
-      context: ./api
-      target: deps
     depends_on:
       db:
         condition: service_healthy
     ports:
       - 5555:5555
-    volumes:
-      - ./api/src:/app/src
-      - ./api/test:/app/test
-      - ./api/prisma:/app/prisma
     environment:
       DATABASE_URL: ${DATABASE_URL}
       DASHBOARD_URL: ${DASHBOARD_URL}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
   dashboard:
-    build:
-      context: ./dashboard
-      target: dev
     depends_on:
       - api
     ports:
       - ${DASHBOARD_PORT:-3001}:3000
-    volumes:
-      - ./dashboard/src:/app/src
     environment:
       API_URL: ${API_URL}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
