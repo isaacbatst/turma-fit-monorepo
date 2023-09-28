@@ -1,7 +1,5 @@
-import AppHeader from "../components/AppHeader"
-import DashBody from "../components/DashBody"
-import Sidebar from "../components/Sidebar"
-import ThemeProvider from "../components/ThemeProvider"
+import AntLayout from "../components/AntLayout";
+import ThemeProvider from "../components/ThemeProvider";
 
 export default function DashboardLayout({
   children,
@@ -10,15 +8,10 @@ export default function DashboardLayout({
 }) {
   return (
     <ThemeProvider>
-      <main className="bg-slate-950 min-h-screen flex flex-col">
-        <AppHeader />
-        <section className="flex flex-1">
-          <Sidebar />
-          <DashBody>
-            {children}
-          </DashBody>
-        </section>
-      </main>
+      {/* <AppHeader /> */}
+      <AntLayout>
+        {children}
+      </AntLayout>
     </ThemeProvider>
   )
 }

@@ -1,4 +1,3 @@
-'use client'
 import { useEquipments } from '@/hooks/useEquipments'
 import Loading from '../../components/Loading'
 import EquipmentListItem from './EquipmentListItem'

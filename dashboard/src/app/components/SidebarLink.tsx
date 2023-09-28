@@ -8,15 +8,10 @@ type Props = {
   isActive: boolean
 }
 
-const SidebarLink = ({Icon, href, label, isActive}: Props) => {
-  const linkDefaultClasses = 'flex gap-3 items-center p-3 rounded-md hover:bg-stone-700 hover:text-white'
-  const linkActiveClasses = 'text-white bg-stone-800';
-  const linkClasses = isActive ? `${linkDefaultClasses} ${linkActiveClasses}` : linkDefaultClasses;
-  const iconClasses = isActive ? 'text-yellow-300' : 'text-stone-400'
-
+const SidebarLink = ({Icon, href, label}: Props) => {
   return (
-    <Link className={linkClasses} href={href}>
-      <Icon size={24} className={iconClasses} />
+    <Link href={href} className='flex items-center gap-3'>
+      <Icon size={24}  />
       <span>{label}</span>
     </Link>
   )
