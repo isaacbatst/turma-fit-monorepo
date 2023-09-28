@@ -10,15 +10,12 @@ const AppHeader = () => {
     <header className='flex justify-between items-center px-5 lg:px-20 py-5'>
       <Image 
         alt='Logo Turma Fit' 
-        className='hidden sm:inline'
+        className='hidden md:inline'
         src='/turma-fit/base/full/base_logo_transparent_background.png' 
         height={90} width={150} 
       />
-      <div className='flex items-center gap-4 sm:hidden'>
-        <button type="button" onClick={() => {
-          console.log('togglin')
-          toggleSidebar()
-        }}>
+      <div className='flex items-center gap-4 md:hidden'>
+        <button type="button" onClick={toggleSidebar}>
           <AiOutlineMenu size={24} className='cursor-pointer' />
         </button>
         <Image 

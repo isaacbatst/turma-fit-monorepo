@@ -10,7 +10,7 @@ type Props = {
   onClick?: () => void
 }
 
-const SidebarLink = ({Icon, href, label, isActive, isCollapsed = false, onClick}: Props) => {
+const SidebarLink = ({Icon, href, label, isActive, onClick}: Props) => {
   const linkActiveClasses = 'text-white bg-slate-800';
   const iconClasses = isActive ? 'text-yellow-300' : 'text-stone-400'
 

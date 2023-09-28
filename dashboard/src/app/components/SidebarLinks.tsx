@@ -1,12 +1,16 @@
 'use client'
-import { usePathname } from 'next/navigation'
+import React from 'react'
 import { AiOutlineHome } from 'react-icons/ai'
 import { BiSpreadsheet } from 'react-icons/bi'
 import { CgGym } from 'react-icons/cg'
 import { GiMuscleUp } from 'react-icons/gi'
 import { MdSportsGymnastics } from 'react-icons/md'
-import LogoutButton from './LogoutButton'
 import SidebarLink from './SidebarLink'
+import { usePathname } from 'next/navigation'
+
+type Props = {
+  onClickLink?: () => void
+}
 
 const links = [
   { href: '/', label: 'Início', Icon: AiOutlineHome },
@@ -18,19 +22,16 @@ const links = [
   { href: '/trainings', label: 'Treinos ', Icon: BiSpreadsheet },
 ]
 
-const Sidebar = () => {
+const SidebarLinks = ({onClickLink: onClick}: Props) => {
   const pathname = usePathname()
   return (
-    <nav className='hidden sm:flex sm:px-7 pt-10 pb-20
-      flex-col gap-3
-    text-stone-400'>
-      {links.map(({ href, label, Icon }) => (
-        <SidebarLink key={href} 
-          href={href} label={label} Icon={Icon} isActive={href === pathname} />
-      ))}
-      <LogoutButton />
-    </nav>
+    links.map(({ href, label, Icon }) => (
+      <SidebarLink key={href} 
+        onClick={onClick}
+        href={href} label={label} Icon={Icon} isActive={href === pathname} 
+      />
+    ))
   )
 }
 
-export default Sidebar
+export default SidebarLinks
