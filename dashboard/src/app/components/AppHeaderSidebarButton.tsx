@@ -1,9 +1,7 @@
 'use client'
 import React from 'react'
 
-type Props = {}
-
-const AppHeaderSidebarButton = (props: Props) => {
+const AppHeaderSidebarButton = () => {
   return (
     <div>AppHeaderSidebarButton</div>
   )
