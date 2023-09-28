@@ -13,12 +13,14 @@ FROM node:18-alpine as builder
 WORKDIR /app
 COPY --from=dev /app/node_modules ./node_modules
 COPY . . 
+ENV NODE_ENV production
 RUN yarn build
-
+RUN rm -rf node_modules
+RUN yarn --frozen-lockfile --production
+RUN yarn prisma generate
 
 FROM node:18-alpine as production
 WORKDIR /app
-ENV NODE_ENV production
-RUN yarn --frozen-lockfile --production
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 CMD ["node", "dist/main.js"]
