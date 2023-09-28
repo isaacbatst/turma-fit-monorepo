@@ -3,7 +3,11 @@ import React from 'react'
 import { MdLogout } from 'react-icons/md'
 import { useApiGateway } from './ApiGatewayContext'
 
-const LogoutButton = () => {
+type Props = {
+  isCollapsed?: boolean
+}
+
+const LogoutButton = ({isCollapsed = false}: Props) => {
   const apiGateway = useApiGateway()
   const logout = async () => {
     await apiGateway.auth.logout()
@@ -11,9 +15,10 @@ const LogoutButton = () => {
   }
 
   return (
-    <button className='flex' type='button' onClick={logout}>
+    <button className='flex gap-3 items-center p-3 rounded-md hover:bg-stone-700 hover:text-white' 
+      type='button' onClick={logout}>
       <MdLogout size={24} />
-      Sair
+      <span className={`${isCollapsed ? 'hidden': 'inline'}`}>Sair</span>
     </button>
   )
 }

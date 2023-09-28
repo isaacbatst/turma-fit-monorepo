@@ -1,10 +1,10 @@
 'use client'
 import { usePathname } from 'next/navigation'
 import { AiOutlineHome } from 'react-icons/ai'
+import { BiSpreadsheet } from 'react-icons/bi'
 import { CgGym } from 'react-icons/cg'
 import { GiMuscleUp } from 'react-icons/gi'
 import { MdSportsGymnastics } from 'react-icons/md'
-import {BiSpreadsheet} from 'react-icons/bi'
 import LogoutButton from './LogoutButton'
 import SidebarLink from './SidebarLink'
 
@@ -21,14 +21,14 @@ const links = [
 const Sidebar = () => {
   const pathname = usePathname()
   return (
-    <nav className='w-[300px] px-7 flex flex-col justify-between pt-10 pb-20 text-stone-400'>
-      <div className='flex flex-col gap-3'>
-        {links.map(({ href, label, Icon }) => (
-          <SidebarLink key={href} href={href} label={label} Icon={Icon} isActive={href === pathname} />
-        ))}
-      </div>
+    <nav className='hidden sm:flex sm:px-7 pt-10 pb-20
+      flex-col gap-3
+    text-stone-400'>
+      {links.map(({ href, label, Icon }) => (
+        <SidebarLink key={href} 
+          href={href} label={label} Icon={Icon} isActive={href === pathname} />
+      ))}
       <LogoutButton />
-
     </nav>
   )
 }

@@ -1,3 +1,4 @@
+import { Input } from 'antd'
 import React from 'react'
 
 type Props = {
@@ -9,10 +10,9 @@ type Props = {
 
 const InputCreate = ({setValue, value, placeholder, inputName}: Props) => {
   return (
-    <input 
-      className="bg-stone-950 text-white px-5 py-3 rounded-lg flex-1 border border-stone-800
-      autofill:text-blue-600" 
+    <Input 
       type="text"
+      size='large'
       name={inputName}
       value={value}
       onChange={event => setValue(event.target.value)}

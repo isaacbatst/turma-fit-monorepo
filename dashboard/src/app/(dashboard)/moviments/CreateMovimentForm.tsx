@@ -39,7 +39,7 @@ const CreateMovimentForm = () => {
   
   
   return (
-    <form tabIndex={0} onSubmit={onSubmit} className="flex flex-col gap-3 border border-stone-600  p-5 rounded-lg self-center min-w-[300px]">
+    <form tabIndex={0} onSubmit={onSubmit} className="flex flex-col gap-3 border border-stone-600  p-5 rounded-lg lg:self-center">
       <InputCreate inputName='moviment' placeholder='Nome do movimento' setValue={setName} value={name} />
       <MuscleSelect selectedMuscle={selectedMuscle} setSelectedMuscle={setSelectedMuscle} />
       <button className='bg-green-600 rounded-lg py-3 flex justify-center' 

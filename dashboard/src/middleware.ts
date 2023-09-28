@@ -25,10 +25,8 @@ const validateCookie = async (cookie?: string) => {
 
 export async function middleware(request: NextRequest) {
   const cookie = request.cookies.get(AUTH_TOKEN_COOKIE)
-  console.log('middleware', cookie)
 
   const isValidCookie = await validateCookie(cookie?.value)
-  console.log(isValidCookie)
   if(request.nextUrl.pathname === '/' && !isValidCookie) {
     return NextResponse.redirect(new URL('/login', request.nextUrl))
   }

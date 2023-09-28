@@ -11,7 +11,7 @@ const ItemActionButton = ({onClick, children, disabled = false}: PropsWithChildr
       onClick={onClick}
       type="button" 
       disabled={disabled}
-      className="bg-stone-800 w-20 text-white px-3 py-1 rounded-md 
+      className="bg-stone-800 sm:w-20 text-white px-3 py-1 rounded-md 
       flex items-center justify-center
       hover:scale-105 active:opacity-80">
       {children}

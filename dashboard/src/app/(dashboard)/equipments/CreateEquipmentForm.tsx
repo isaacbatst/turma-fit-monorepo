@@ -36,7 +36,7 @@ const CreateEquipmentForm: React.FC = () => {
         setValue={setName}
         value={name}
       />
-      <button type="submit" title="Salvar" className="bg-amber-500 text-white px-6 py-3 rounded-lg">
+      <button type="submit" title="Salvar" className="bg-amber-500 text-white px-5 py-3 rounded-lg">
         {
           isSubmitting ? <Loading /> : <AiOutlineCheck size={24} />
         }

@@ -15,7 +15,9 @@ services:
       timeout: 5s
       retries: 5
   api:
-    build: ./api
+    build: 
+      context: ./api
+      target: deps
     depends_on:
       db:
         condition: service_healthy
