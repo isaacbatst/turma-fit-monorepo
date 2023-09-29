@@ -10,9 +10,26 @@ export class ExerciseSet {
     readonly sets: number = 3,
     readonly repetitions: number = 10,
     readonly restTime?: number,
+    private order: number = 1,
   ) {
     this.exercises = Array.isArray(exercise) ? exercise : [exercise];
     this.validate();
+  }
+
+  changeOrder(order: number) {
+    if (order <= 0) {
+      throw new UnprocessableEntityException('INVALID_ORDER');
+    }
+
+    this.order = order;
+  }
+
+  getOrder() {
+    return this.order;
+  }
+
+  getMuscles() {
+    return this.exercises.map((exercise) => exercise.moviment.muscle);
   }
 
   toJSON() {
@@ -22,6 +39,7 @@ export class ExerciseSet {
       sets: this.sets,
       repetitions: this.repetitions,
       restTime: this.restTime,
+      order: this.order,
     };
   }
 

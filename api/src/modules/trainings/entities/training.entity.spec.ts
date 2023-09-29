@@ -5,13 +5,11 @@ import { Exercise } from './exercise.entity';
 import { Training } from './training.entity';
 
 describe('Training', () => {
-  it('should create empty training', () => {
-    const training = new Training('training-id');
-    expect(training).toBeDefined();
-    expect(training.exerciseSets).toHaveLength(0);
-  });
+  let benchPressExercise: Exercise;
+  let barbellCurlExercise: Exercise;
+  let barbellBarExercise: Exercise;
 
-  it('should add sets', () => {
+  beforeEach(() => {
     const chest = new Muscle('chest-id', 'Chest');
     const bisceps = new Muscle('biceps-id', 'Biceps');
     const benchPress = new Moviment('bench-press-id', 'Bench Press', chest);
@@ -22,30 +20,26 @@ describe('Training', () => {
     );
     const bar = new Equipment('bar-id', 'Bar');
     const curlBar = new Equipment('curl-bar-id', 'Curl Bar');
-    const benchPressExercise = new Exercise('id', benchPress, bar);
-    const barbellCurlExercise = new Exercise('id', barbellCurl, curlBar);
+    benchPressExercise = new Exercise('id', benchPress, bar);
+    barbellCurlExercise = new Exercise('id', barbellCurl, curlBar);
+    barbellBarExercise = new Exercise('id', barbellCurl, bar);
+  });
 
+  it('should create empty training', () => {
+    const training = new Training('training-id');
+    expect(training).toBeDefined();
+    expect(training.getExerciseSets()).toHaveLength(0);
+  });
+
+  it('should add sets', () => {
     const training = new Training('training-id');
     training.addExerciseSet('set-id', benchPressExercise, 3, 10);
     training.addExerciseSet('set-id', barbellCurlExercise, 3, 10);
 
-    expect(training.exerciseSets).toHaveLength(2);
+    expect(training.getExerciseSets()).toHaveLength(2);
   });
 
   it('should get trained muscles', () => {
-    const chest = new Muscle('chest-id', 'Chest');
-    const bisceps = new Muscle('biceps-id', 'Biceps');
-    const benchPress = new Moviment('bench-press-id', 'Bench Press', chest);
-    const barbellCurl = new Moviment(
-      'barbell-curl-id',
-      'Barbell Curl',
-      bisceps,
-    );
-    const bar = new Equipment('bar-id', 'Bar');
-    const curlBar = new Equipment('curl-bar-id', 'Curl Bar');
-    const benchPressExercise = new Exercise('id', benchPress, bar);
-    const barbellCurlExercise = new Exercise('id', barbellCurl, curlBar);
-
     const training = new Training('training-id');
     training.addExerciseSet('id', benchPressExercise, 3, 10);
     training.addExerciseSet('id', barbellCurlExercise, 3, 10);
@@ -54,5 +48,26 @@ describe('Training', () => {
     expect(muscles).toHaveLength(2);
     expect(muscles[0].name).toBe('Chest');
     expect(muscles[1].name).toBe('Biceps');
+  });
+
+  it('should get exercise sets by order', () => {
+    const training = new Training('training-id');
+    training.addExerciseSet('bench-id', benchPressExercise, 3, 10);
+    training.addExerciseSet('barbell-id', barbellCurlExercise, 3, 10);
+
+    expect(training.getExerciseByOrder(1)?.id).toBe('bench-id');
+    expect(training.getExerciseByOrder(2)?.id).toBe('barbell-id');
+  });
+
+  it('should change exercise set order', () => {
+    const training = new Training('training-id');
+    training.addExerciseSet('bench-id', benchPressExercise, 3, 10);
+    training.addExerciseSet('barbell-id', barbellCurlExercise, 3, 10);
+    training.addExerciseSet('bar-id', barbellBarExercise, 3, 10);
+
+    training.changeExerciseSetOrder('bench-id', 3);
+    expect(training.getExerciseByOrder(1)?.id).toBe('barbell-id');
+    expect(training.getExerciseByOrder(2)?.id).toBe('bar-id');
+    expect(training.getExerciseByOrder(3)?.id).toBe('bench-id');
   });
 });

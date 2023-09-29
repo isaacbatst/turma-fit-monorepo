@@ -61,7 +61,7 @@ describe('TrainingsService', () => {
       repetitions: 10,
       sets: 3,
     });
-    expect(trainingRepository.items[0].exerciseSets).toHaveLength(1);
+    expect(trainingRepository.items[0].getExerciseSets()).toHaveLength(1);
   });
 
   it('should return all trainings', async () => {

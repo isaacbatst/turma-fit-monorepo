@@ -1,8 +1,9 @@
+import { OrderedList } from '../../core/ordered-list';
+import { ExerciseSet } from './exercise-set.entity';
 import { Exercise } from './exercise.entity';
-import { ExerciseSet as ExerciseSet } from './exercise-set.entity';
 
 export class Training {
-  readonly exerciseSets: ExerciseSet[] = [];
+  private readonly exerciseSets = new OrderedList<ExerciseSet>();
 
   constructor(
     readonly id: string,
@@ -17,16 +18,36 @@ export class Training {
     repetitions: number,
     restTime?: number,
   ): ExerciseSet {
-    const set = new ExerciseSet(setId, exercise, series, repetitions, restTime);
-    this.exerciseSets.push(set);
+    const order = this.exerciseSets.getNextOrder();
+    const set = new ExerciseSet(
+      setId,
+      exercise,
+      series,
+      repetitions,
+      restTime,
+      order,
+    );
+    this.exerciseSets.add(set);
     return set;
+  }
+
+  getExerciseSets() {
+    return this.exerciseSets.getItems();
+  }
+
+  changeExerciseSetOrder(setId: string, newOrder: number) {
+    this.exerciseSets.changeOrder(setId, newOrder);
+  }
+
+  getExerciseByOrder(order: number): ExerciseSet | undefined {
+    return this.exerciseSets.getByOrder(order);
   }
 
   getMuscles() {
     return this.exerciseSets
-      .map((exerciseSet) => exerciseSet.exercises)
+      .getItems()
+      .map((exerciseSet) => exerciseSet.getMuscles())
       .flat()
-      .map((exercise) => exercise.moviment.muscle)
       .filter(
         (muscle, index, muscles) =>
           muscles.findIndex((m) => m.id === muscle.id) === index,
@@ -39,9 +60,9 @@ export class Training {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       muscles: this.getMuscles().map((muscle) => muscle.toJSON()),
-      exerciseSets: this.exerciseSets.map((exerciseSet) =>
-        exerciseSet.toJSON(),
-      ),
+      exerciseSets: this.exerciseSets
+        .getItems()
+        .map((exerciseSet) => exerciseSet.toJSON()),
     };
   }
 }
