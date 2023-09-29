@@ -1,4 +1,4 @@
-name: Publish API Docker image
+name: Deploy API
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   push_api:
-    name: Push API
+    name: Deploy API
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo

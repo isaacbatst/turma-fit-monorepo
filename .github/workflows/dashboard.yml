@@ -1,4 +1,4 @@
-name: Publish Dashboard Docker image
+name: Deploy Dashboard
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
       "dashboard/**"
 
 jobs:
-  push_dashboard:
-    name: Push Dashboard
+  deploy_dashboard:
+    name: Deploy Dashboard
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
