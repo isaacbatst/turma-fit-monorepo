@@ -23,4 +23,6 @@ FROM node:18-alpine as production
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-CMD ["node", "dist/main.js"]
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./package.json
+CMD ["yarn", "start:prod"]
