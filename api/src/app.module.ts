@@ -8,6 +8,7 @@ import { MusclesModule } from './modules/muscles/muscles.module';
 import { EquipmentsModule } from './modules/equipments/equipments.module';
 import { MovimentsModule } from './modules/moviments/moviments.module';
 import { TrainingsModule } from './modules/trainings/trainings.module';
+import { WeekPlanningModule } from './modules/week-planning/week-planning.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TrainingsModule } from './modules/trainings/trainings.module';
     CoreModule,
     MovimentsModule,
     TrainingsModule,
+    WeekPlanningModule,
   ],
   providers: [
     {
