@@ -8,15 +8,9 @@
 
 ## Development
 
-### Docker Flow
 - Fill `.env` from root folder
-- Run containers
-
+- Run compose services:
+  
 ```sh
-docker compose up
+docker compose --file compose.development.yml up
 ```
-
-## services
-- API
-- Dashboard
-- App
