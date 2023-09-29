@@ -44,6 +44,7 @@ export class TrainingsMapperRepositoryPrisma {
         prismaExerciseSet.sets,
         prismaExerciseSet.repetitions,
         prismaExerciseSet.restTime ?? undefined,
+        prismaExerciseSet.order,
       );
     });
 

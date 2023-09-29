@@ -7,4 +7,5 @@ export class TrainingsRepositoryMemory
   implements TrainingsRepository
 {
   async addExerciseSet() {}
+  async updateExerciseSetOrders() {}
 }

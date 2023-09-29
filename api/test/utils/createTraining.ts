@@ -2,6 +2,46 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { DASHBOARD_AUTH_COOKIE } from '../../src/constants/cookies';
 
+export const createMuscle = async (app: INestApplication, token: string) => {
+  const response = await request(app.getHttpServer())
+    .post('/muscles')
+    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+    .send({ name: 'Biceps' });
+
+  expect(response.status).toBe(201);
+  expect(response.body.id).toBeDefined();
+
+  return response.body.id;
+};
+
+export const createMoviment = async (
+  app: INestApplication,
+  token: string,
+  muscleId: string,
+) => {
+  const response = await request(app.getHttpServer())
+    .post('/moviments')
+    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+    .send({ name: 'Supino Reto', muscleId });
+
+  expect(response.status).toBe(201);
+  expect(response.body.id).toBeDefined();
+
+  return response.body.id;
+};
+
+export const createEquipment = async (app: INestApplication, token: string) => {
+  const response = await request(app.getHttpServer())
+    .post('/equipments')
+    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+    .send({ name: 'Barra Reta' });
+
+  expect(response.status).toBe(201);
+  expect(response.body.id).toBeDefined();
+
+  return response.body.id;
+};
+
 export const createTraining = async (app: INestApplication, token: string) => {
   const createTrainingResponse = await request(app.getHttpServer())
     .post('/trainings')
@@ -10,31 +50,36 @@ export const createTraining = async (app: INestApplication, token: string) => {
   expect(createTrainingResponse.status).toBe(201);
   expect(createTrainingResponse.body.id).toBeDefined();
 
-  const createMuscleResponse = await request(app.getHttpServer())
-    .post('/muscles')
-    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-    .send({ name: 'Biceps' });
-  expect(createMuscleResponse.status).toBe(201);
-  expect(createMuscleResponse.body.id).toBeDefined();
-
-  const createMovimentResponse = await request(app.getHttpServer())
-    .post('/moviments')
-    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-    .send({ name: 'Supino Reto', muscleId: createMuscleResponse.body.id });
-  expect(createMovimentResponse.status).toBe(201);
-  expect(createMovimentResponse.body.id).toBeDefined();
-
-  const createEquipmentResponse = await request(app.getHttpServer())
-    .post('/equipments')
-    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-    .send({ name: 'Barra Reta' });
-
-  expect(createEquipmentResponse.status).toBe(201);
-  expect(createEquipmentResponse.body.id).toBeDefined();
+  const muscleId = await createMuscle(app, token);
+  const movimentId = await createMoviment(app, token, muscleId);
+  const equipmentId = await createEquipment(app, token);
 
   return {
     trainingId: createTrainingResponse.body.id,
-    movimentId: createMovimentResponse.body.id,
-    equipmentId: createEquipmentResponse.body.id,
+    movimentId: movimentId,
+    equipmentId: equipmentId,
   };
+};
+
+export const createExerciseSet = async (
+  app: INestApplication,
+  token: string,
+  trainingId: string,
+  movimentId: string,
+  equipmentId: string,
+) => {
+  const response = await request(app.getHttpServer())
+    .post(`/trainings/${trainingId}/exercise-set`)
+    .send({
+      exercise: {
+        movimentId: movimentId,
+        equipmentIds: [equipmentId],
+      },
+      sets: 3,
+      repetitions: 10,
+    })
+    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+  expect(response.status).toBe(201);
+  expect(response.body.id).toBeDefined();
+  return response.body.id;
 };

@@ -35,6 +35,17 @@ export class TrainingsService {
     };
   }
 
+  async changeExerciseSetOrder(
+    trainingId: string,
+    exerciseSetId: string,
+    order: number,
+  ) {
+    const training = await this.trainingRepository.findById(trainingId);
+    if (!training) throw new NotFoundException('TRAINING_NOT_FOUND');
+    training.changeExerciseSetOrder(exerciseSetId, order);
+    await this.trainingRepository.updateExerciseSetOrders(training);
+  }
+
   async addExerciseSet(trainingId: string, input: AddExerciseDto) {
     const training = await this.trainingRepository.findById(trainingId);
     if (!training) throw new NotFoundException('TRAINING_NOT_FOUND');
@@ -62,6 +73,10 @@ export class TrainingsService {
       input.repetitions,
     );
     await this.trainingRepository.addExerciseSet(training, exerciseSet);
+
+    return {
+      id: exerciseSet.id,
+    };
   }
 
   async findAll() {

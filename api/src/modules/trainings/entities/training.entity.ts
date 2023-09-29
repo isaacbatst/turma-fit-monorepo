@@ -17,15 +17,15 @@ export class Training {
     series: number,
     repetitions: number,
     restTime?: number,
+    order?: number,
   ): ExerciseSet {
-    const order = this.exerciseSets.getNextOrder();
     const set = new ExerciseSet(
       setId,
       exercise,
       series,
       repetitions,
       restTime,
-      order,
+      order ?? this.exerciseSets.getNextOrder(),
     );
     this.exerciseSets.add(set);
     return set;

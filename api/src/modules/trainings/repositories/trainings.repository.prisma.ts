@@ -29,6 +29,26 @@ export class TrainingsRepositoryPrisma
     },
   };
 
+  async updateExerciseSetOrders(training: Training): Promise<void> {
+    try {
+      await this.prisma.training.update({
+        where: { id: training.id },
+        data: {
+          exerciseSets: {
+            updateMany: training.getExerciseSets().map((exerciseSet) => ({
+              where: { id: exerciseSet.id },
+              data: {
+                order: exerciseSet.getOrder(),
+              },
+            })),
+          },
+        },
+      });
+    } catch (err) {
+      this.errorAdapter.adapt(err);
+    }
+  }
+
   async addExerciseSet(
     training: Training,
     exerciseSet: ExerciseSet,
