@@ -8,4 +8,5 @@ export class TrainingsRepositoryMemory
 {
   async addExerciseSet() {}
   async updateExerciseSetOrders() {}
+  async removeExerciseSet() {}
 }

@@ -173,16 +173,50 @@ describe('TrainingsController (e2e)', () => {
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
 
       expect(response.status).toBe(204);
-      console.log(firstExerciseSetId, secondExerciseSetId);
       const getByIdResponse = await request(app.getHttpServer())
         .get(`/trainings/${trainingId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-      console.dir(getByIdResponse.body, { depth: 10 });
       expect(getByIdResponse.status).toBe(200);
       expect(getByIdResponse.body.exerciseSets[0].id).toBe(firstExerciseSetId);
       expect(getByIdResponse.body.exerciseSets[0].order).toBe(2);
       expect(getByIdResponse.body.exerciseSets[1].id).toBe(secondExerciseSetId);
       expect(getByIdResponse.body.exerciseSets[1].order).toBe(1);
+    });
+  });
+
+  describe.only('/trainings/:id/exercise-set/:exerciseSetId (DELETE)', () => {
+    it('should delete exercise set', async () => {
+      const { trainingId, equipmentId, movimentId } = await createTraining(
+        app,
+        token,
+      );
+      const firstExerciseSetId = await createExerciseSet(
+        app,
+        token,
+        trainingId,
+        movimentId,
+        equipmentId,
+      );
+      const secondExerciseSetId = await createExerciseSet(
+        app,
+        token,
+        trainingId,
+        movimentId,
+        equipmentId,
+      );
+
+      const response = await request(app.getHttpServer())
+        .delete(`/trainings/${trainingId}/exercise-set/${firstExerciseSetId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+
+      expect(response.status).toBe(204);
+      const getByIdResponse = await request(app.getHttpServer())
+        .get(`/trainings/${trainingId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+      expect(getByIdResponse.status).toBe(200);
+      expect(getByIdResponse.body.exerciseSets).toHaveLength(1);
+      expect(getByIdResponse.body.exerciseSets[0].id).toBe(secondExerciseSetId);
+      expect(getByIdResponse.body.exerciseSets[0].order).toBe(1);
     });
   });
 });

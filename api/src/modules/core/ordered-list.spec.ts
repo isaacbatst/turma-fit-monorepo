@@ -63,4 +63,12 @@ describe('Ordered List', () => {
     const orderedList = new OrderedList(items);
     expect(orderedList.getNextOrder()).toBe(4);
   });
+
+  it('should remove item', () => {
+    const orderedList = new OrderedList(items);
+    orderedList.remove('2');
+    expect(orderedList.getById('1')?.order).toBe(1);
+    expect(orderedList.getById('2')).toBeUndefined();
+    expect(orderedList.getById('3')?.order).toBe(2);
+  });
 });

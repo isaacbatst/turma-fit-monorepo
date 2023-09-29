@@ -30,11 +30,15 @@ export const createMoviment = async (
   return response.body.id;
 };
 
-export const createEquipment = async (app: INestApplication, token: string) => {
+export const createEquipment = async (
+  app: INestApplication,
+  token: string,
+  name = 'Barra Reta',
+) => {
   const response = await request(app.getHttpServer())
     .post('/equipments')
     .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-    .send({ name: 'Barra Reta' });
+    .send({ name });
 
   expect(response.status).toBe(201);
   expect(response.body.id).toBeDefined();
@@ -52,7 +56,7 @@ export const createTraining = async (app: INestApplication, token: string) => {
 
   const muscleId = await createMuscle(app, token);
   const movimentId = await createMoviment(app, token, muscleId);
-  const equipmentId = await createEquipment(app, token);
+  const equipmentId = await createEquipment(app, token, 'Barra');
 
   return {
     trainingId: createTrainingResponse.body.id,

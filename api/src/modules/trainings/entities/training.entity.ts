@@ -31,6 +31,10 @@ export class Training {
     return set;
   }
 
+  removeExerciseSet(setId: string) {
+    this.exerciseSets.remove(setId);
+  }
+
   getExerciseSets() {
     return this.exerciseSets.getItems();
   }

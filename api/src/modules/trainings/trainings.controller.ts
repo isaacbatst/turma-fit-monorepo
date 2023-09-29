@@ -56,4 +56,13 @@ export class TrainingsController {
   remove(@Param('id') id: string) {
     return this.trainingsService.remove(id);
   }
+
+  @HttpCode(204)
+  @Delete(':id/exercise-set/:exerciseSetId')
+  removeExerciseSet(
+    @Param('id') id: string,
+    @Param('exerciseSetId') exerciseSetId: string,
+  ) {
+    return this.trainingsService.removeExerciseSet(id, exerciseSetId);
+  }
 }

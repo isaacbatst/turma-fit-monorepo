@@ -93,4 +93,11 @@ export class TrainingsService {
   async remove(id: string) {
     await this.trainingRepository.remove(id);
   }
+
+  async removeExerciseSet(trainingId: string, setId: string) {
+    const training = await this.trainingRepository.findById(trainingId);
+    if (!training) throw new NotFoundException('TRAINING_NOT_FOUND');
+    training.removeExerciseSet(setId);
+    await this.trainingRepository.removeExerciseSet(training, setId);
+  }
 }

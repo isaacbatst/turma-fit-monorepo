@@ -20,6 +20,8 @@ export class PrismaErrorAdapter {
       const message = `${this.entityName.toUpperCase()}_NOT_FOUND`;
       throw new NotFoundException({ message });
     }
+
+    console.error(err);
     throw new InternalServerErrorException();
   }
 

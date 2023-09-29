@@ -93,4 +93,28 @@ describe('TrainingsService', () => {
     expect(training.getExerciseByOrder(2)?.id).toBe(firstId);
     expect(training.getExerciseByOrder(1)?.id).toBe(secondId);
   });
+
+  it('should remove exercise set', async () => {
+    const { id: trainingId } = await service.create();
+    const { id: firstId } = await service.addExerciseSet(trainingId, {
+      exercise: {
+        movimentId: 'supino-reto',
+        equipmentIds: ['barra-reta'],
+      },
+      repetitions: 10,
+      sets: 3,
+    });
+    const { id: secondId } = await service.addExerciseSet(trainingId, {
+      exercise: {
+        movimentId: 'crucifixo-reto',
+        equipmentIds: ['halteres'],
+      },
+      repetitions: 10,
+      sets: 3,
+    });
+    await service.removeExerciseSet(trainingId, firstId);
+    const training = trainingRepository.items[0];
+    expect(training.getExerciseSets()).toHaveLength(1);
+    expect(training.getExerciseByOrder(1)?.id).toBe(secondId);
+  });
 });

@@ -49,6 +49,20 @@ export class TrainingsRepositoryPrisma
     }
   }
 
+  async removeExerciseSet(
+    training: Training,
+    exerciseSetId: string,
+  ): Promise<void> {
+    try {
+      await this.updateExerciseSetOrders(training);
+      await this.prisma.exerciseSet.delete({
+        where: { id: exerciseSetId },
+      });
+    } catch (err) {
+      this.errorAdapter.adapt(err);
+    }
+  }
+
   async addExerciseSet(
     training: Training,
     exerciseSet: ExerciseSet,

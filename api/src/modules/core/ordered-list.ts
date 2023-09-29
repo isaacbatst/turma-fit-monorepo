@@ -48,4 +48,16 @@ export class OrderedList<T extends OrderedListItem> {
     }
     item.changeOrder(newOrder);
   }
+
+  remove(itemId: string) {
+    const item = this.items.find((item) => item.id === itemId);
+    if (!item) {
+      throw new Error('Item not found');
+    }
+    const order = item.getOrder();
+    this.items.splice(this.items.indexOf(item), 1);
+    this.items
+      .filter((item) => item.getOrder() > order)
+      .forEach((item) => item.changeOrder(item.getOrder() - 1));
+  }
 }
