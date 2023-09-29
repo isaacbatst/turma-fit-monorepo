@@ -21,18 +21,28 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
-      - name: Build and push turma-fit-api
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: ./api
           push: true
           tags: isaacbatst/turma-fit-api:production
 
-      - name: Deploy turma-fit-api
+      - name: Send files via ssh
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "./turmafit.deploy.sh, compose.yml, compose.production.yml"
+          target: ${{ secrets.PROJECT_PATH }}
+
+      - name: Run deploy script
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: ./turmafit.deploy.sh api
+          script: cd ${{ secrets.PROJECT_PATH }} && ./turmafit.deploy.sh api
