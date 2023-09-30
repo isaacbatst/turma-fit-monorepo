@@ -21,6 +21,7 @@ RUN yarn prisma generate
 
 FROM node:18-alpine as production
 WORKDIR /app
+ENV NODE_ENV production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
