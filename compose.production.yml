@@ -10,12 +10,8 @@ services:
       file: ./compose.yml
       service: api
     image: isaacbatst/turma-fit-api:production
-    environment:
-      - NODE_ENV=production
   dashboard:
     extends:
       file: ./compose.yml
       service: dashboard
     image: isaacbatst/turma-fit-dashboard:production
-    environment:
-      - NODE_ENV=production
