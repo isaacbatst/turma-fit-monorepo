@@ -35,6 +35,7 @@ const TrainingItem = ({training}: Props) => {
       })
       mutate('trainings')
       setIsModalVisible(false)
+      addExerciseForm.resetFields()
     } catch (error) {
       const message = addExerciseErrorHandler.getMessage(error)
       addExerciseErrorHandler.showToast(message)
