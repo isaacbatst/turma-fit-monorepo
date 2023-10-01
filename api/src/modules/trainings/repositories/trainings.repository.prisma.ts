@@ -74,6 +74,7 @@ export class TrainingsRepositoryPrisma
           repetitions: exerciseSet.repetitions,
           sets: exerciseSet.sets,
           restTime: exerciseSet.restTime,
+          order: exerciseSet.getOrder(),
           training: {
             connect: {
               id: training.id,

@@ -13,8 +13,15 @@ export type AddExerciseSetParams = {
   sets: number;
 }
 
+export type ChangeExerciseSetOrderParams = {
+  trainingId: string;
+  exerciseSetId: string;
+  order: number;
+}
+
 export type ApiGatewayTraining = {
   createTraining(): Promise<void>;
   addExerciseSet(params: AddExerciseSetParams): Promise<void>;
   getTrainings(): Promise<Training[]>;
+  changeExerciseSetOrder(params: ChangeExerciseSetOrderParams): Promise<void>;
 }

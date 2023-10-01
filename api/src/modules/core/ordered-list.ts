@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { WithId } from '../../common/types/WithId';
 import { WithOrder } from '../../common/types/WithOrder';
 
@@ -29,7 +30,7 @@ export class OrderedList<T extends OrderedListItem> {
   changeOrder(itemId: string, newOrder: number) {
     const item = this.items.find((item) => item.id === itemId);
     if (!item) {
-      throw new Error('Item not found');
+      throw new NotFoundException('Item not found');
     }
     const oldOrder = item.getOrder();
 
