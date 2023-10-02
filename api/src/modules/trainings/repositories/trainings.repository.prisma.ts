@@ -59,6 +59,7 @@ export class TrainingsRepositoryPrisma
         where: { id: exerciseSetId },
       });
     } catch (err) {
+      console.log(err);
       this.errorAdapter.adapt(err);
     }
   }

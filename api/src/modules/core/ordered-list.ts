@@ -5,7 +5,10 @@ import { WithOrder } from '../../common/types/WithOrder';
 export type OrderedListItem = WithOrder & WithId;
 
 export class OrderedList<T extends OrderedListItem> {
-  constructor(private readonly items: T[] = []) {}
+  constructor(
+    private readonly items: T[] = [],
+    private notFoundMessage: string = 'ITEM_NOT_FOUND',
+  ) {}
 
   add(item: T) {
     this.items.push(item);
@@ -30,7 +33,7 @@ export class OrderedList<T extends OrderedListItem> {
   changeOrder(itemId: string, newOrder: number) {
     const item = this.items.find((item) => item.id === itemId);
     if (!item) {
-      throw new NotFoundException('Item not found');
+      throw new NotFoundException(this.notFoundMessage);
     }
     const oldOrder = item.getOrder();
 
@@ -53,7 +56,7 @@ export class OrderedList<T extends OrderedListItem> {
   remove(itemId: string) {
     const item = this.items.find((item) => item.id === itemId);
     if (!item) {
-      throw new Error('Item not found');
+      throw new NotFoundException(this.notFoundMessage);
     }
     const order = item.getOrder();
     this.items.splice(this.items.indexOf(item), 1);

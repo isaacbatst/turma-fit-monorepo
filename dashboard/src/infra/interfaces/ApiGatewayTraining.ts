@@ -24,4 +24,5 @@ export type ApiGatewayTraining = {
   addExerciseSet(params: AddExerciseSetParams): Promise<void>;
   getTrainings(): Promise<Training[]>;
   changeExerciseSetOrder(params: ChangeExerciseSetOrderParams): Promise<void>;
+  removeExerciseSet(trainingId: string, exerciseSetId: string): Promise<void>;
 }

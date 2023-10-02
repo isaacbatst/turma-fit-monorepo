@@ -20,4 +20,8 @@ export class ApiGatewayTrainingAxios extends ApiGatewayAxiosComponent implements
       order
     })
   }
+
+  removeExerciseSet(trainingId: string, exerciseSetId: string): Promise<void> {
+    return this.axios.delete(`/trainings/${trainingId}/exercise-set/${exerciseSetId}`)
+  }
 }

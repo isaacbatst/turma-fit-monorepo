@@ -3,7 +3,10 @@ import { ExerciseSet } from './exercise-set.entity';
 import { Exercise } from './exercise.entity';
 
 export class Training {
-  private readonly exerciseSets = new OrderedList<ExerciseSet>();
+  private readonly exerciseSets = new OrderedList<ExerciseSet>(
+    [],
+    'EXERCISE_SET_NOT_FOUND',
+  );
 
   constructor(
     readonly id: string,

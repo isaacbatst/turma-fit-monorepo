@@ -65,7 +65,7 @@ const TrainingItem = ({training}: Props) => {
   return (
     <div className='flex flex-col gap-3'>
       <SortableList items={orderedExerciseSets} 
-        renderItem={(item) => <ExerciseSetItem exerciseSet={item} />}
+        renderItem={(item) => <ExerciseSetItem exerciseSet={item} trainingId={training.id} />}
         handleDragEnd={updateOrder}
       />
       <button
