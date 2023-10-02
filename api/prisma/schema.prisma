@@ -89,6 +89,6 @@ model Exercise {
   movimentId    String
   equipments    Equipment[]
   grip          Grip?
-  exerciseSet   ExerciseSet @relation(fields: [exerciseSetId], references: [id])
+  exerciseSet   ExerciseSet @relation(fields: [exerciseSetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   exerciseSetId String
 }

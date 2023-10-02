@@ -1,8 +1,10 @@
+import { DragEndEvent } from '@dnd-kit/core'
 import { Form, Modal } from 'antd'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useSWRConfig } from 'swr'
 import { Training } from '../../../types/Training'
 import { useApiGateway } from '../../components/ApiGatewayContext'
+import SortableList from '../../components/Sortable/SortableList'
 import { AddExerciseErrorHandler } from './AddExerciseErrorHandler'
 import AddExerciseForm, { AddExerciseFormValues } from './AddExerciseForm'
 import ExerciseSetItem from './ExerciseSetItem'
@@ -35,18 +37,37 @@ const TrainingItem = ({training}: Props) => {
       })
       mutate('trainings')
       setIsModalVisible(false)
+      addExerciseForm.resetFields()
     } catch (error) {
       const message = addExerciseErrorHandler.getMessage(error)
       addExerciseErrorHandler.showToast(message)
     }
   }
+
+  const orderedExerciseSets = useMemo(() => training.exerciseSets.slice().sort(
+    (a, b) => a.order - b.order
+  ), [training.exerciseSets])
+
+  const updateOrder = async (e: DragEndEvent) => {
+    const overIndex = orderedExerciseSets.findIndex(exerciseSet => exerciseSet.id === e.over?.id)
+    const over = orderedExerciseSets[overIndex]
+    const {order} = over
+    await mutate<Training[]>('trainings', async (trainings) => {
+      await apiGateway.training.changeExerciseSetOrder({
+        exerciseSetId: e.active.id as string, 
+        trainingId: training.id,
+        order,
+      })  
+      return trainings
+    })
+  }
+
   return (
     <div className='flex flex-col gap-3'>
-      <ul className='flex flex-col gap-3'>
-        {training.exerciseSets.map((exerciseSet) => (
-          <ExerciseSetItem key={exerciseSet.id} exerciseSet={exerciseSet} />
-        ))}
-      </ul>
+      <SortableList items={orderedExerciseSets} 
+        renderItem={(item) => <ExerciseSetItem exerciseSet={item} trainingId={training.id} />}
+        handleDragEnd={updateOrder}
+      />
       <button
         className='bg-amber-500 hover:scale-105 active:opacity-80
           px-5 py-2 rounded-lg'

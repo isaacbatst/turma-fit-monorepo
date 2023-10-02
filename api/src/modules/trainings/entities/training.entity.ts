@@ -3,7 +3,10 @@ import { ExerciseSet } from './exercise-set.entity';
 import { Exercise } from './exercise.entity';
 
 export class Training {
-  private readonly exerciseSets = new OrderedList<ExerciseSet>();
+  private readonly exerciseSets = new OrderedList<ExerciseSet>(
+    [],
+    'EXERCISE_SET_NOT_FOUND',
+  );
 
   constructor(
     readonly id: string,
@@ -17,18 +20,22 @@ export class Training {
     series: number,
     repetitions: number,
     restTime?: number,
+    order?: number,
   ): ExerciseSet {
-    const order = this.exerciseSets.getNextOrder();
     const set = new ExerciseSet(
       setId,
       exercise,
       series,
       repetitions,
       restTime,
-      order,
+      order ?? this.exerciseSets.getNextOrder(),
     );
     this.exerciseSets.add(set);
     return set;
+  }
+
+  removeExerciseSet(setId: string) {
+    this.exerciseSets.remove(setId);
   }
 
   getExerciseSets() {

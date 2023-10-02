@@ -70,4 +70,15 @@ describe('Training', () => {
     expect(training.getExerciseByOrder(2)?.id).toBe('bar-id');
     expect(training.getExerciseByOrder(3)?.id).toBe('bench-id');
   });
+
+  it('should remove exercise set', () => {
+    const training = new Training('training-id');
+    training.addExerciseSet('bench-id', benchPressExercise, 3, 10);
+    training.addExerciseSet('barbell-id', barbellCurlExercise, 3, 10);
+    training.addExerciseSet('bar-id', barbellBarExercise, 3, 10);
+    training.removeExerciseSet('barbell-id');
+    expect(training.getExerciseSets()).toHaveLength(2);
+    expect(training.getExerciseByOrder(1)?.id).toBe('bench-id');
+    expect(training.getExerciseByOrder(2)?.id).toBe('bar-id');
+  });
 });

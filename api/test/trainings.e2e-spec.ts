@@ -5,7 +5,7 @@ import { createTestApp } from './utils/app';
 import { loginAdmin } from './utils/loginAdmin';
 import { resetDatabase } from './utils/resetDatabase';
 import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
-import { createTraining } from './utils/createTraining';
+import { createExerciseSet, createTraining } from './utils/createTraining';
 
 describe('TrainingsController (e2e)', () => {
   let app: INestApplication;
@@ -49,10 +49,10 @@ describe('TrainingsController (e2e)', () => {
     });
   });
 
-  describe('/trainings/:id/add-exercise-set (PATCH)', () => {
+  describe('/trainings/:id/exercise-set (POST)', () => {
     it('returns 401 without token', async () => {
-      const response = await request(app.getHttpServer()).patch(
-        '/trainings/1/add-exercise-set',
+      const response = await request(app.getHttpServer()).post(
+        '/trainings/1/exercise-set',
       );
 
       expect(response.status).toBe(401);
@@ -61,7 +61,7 @@ describe('TrainingsController (e2e)', () => {
 
     it('returns 400 without sets', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/trainings/any-id/add-exercise-set`)
+        .post(`/trainings/any-id/exercise-set`)
         .send({
           exercise: {
             movimentId: 'any-id',
@@ -76,7 +76,7 @@ describe('TrainingsController (e2e)', () => {
 
     it('returns 400 without repetitions', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/trainings/any-id/add-exercise-set`)
+        .post(`/trainings/any-id/exercise-set`)
         .send({
           exercise: {
             movimentId: 'any-id',
@@ -91,7 +91,7 @@ describe('TrainingsController (e2e)', () => {
 
     it('returns 400 with exercise without movimentId', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/trainings/any-id/add-exercise-set`)
+        .post(`/trainings/any-id/exercise-set`)
         .send({
           exercise: {
             equipmentIds: ['any-id'],
@@ -110,7 +110,7 @@ describe('TrainingsController (e2e)', () => {
         token,
       );
       const response = await request(app.getHttpServer())
-        .patch(`/trainings/${trainingId}/add-exercise-set`)
+        .post(`/trainings/${trainingId}/exercise-set`)
         .send({
           exercise: {
             movimentId: movimentId,
@@ -120,7 +120,8 @@ describe('TrainingsController (e2e)', () => {
           repetitions: 10,
         })
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(201);
+      expect(response.body.id).toBeDefined();
 
       const getByIdResponse = await request(app.getHttpServer())
         .get(`/trainings/${trainingId}`)
@@ -141,6 +142,81 @@ describe('TrainingsController (e2e)', () => {
         .get(`/trainings/${trainingId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
       expect(getByIdResponse.status).toBe(404);
+    });
+  });
+
+  describe('/trainings/:id/change-exercise-set-order (PATCH)', () => {
+    it('should change exercise set order', async () => {
+      const { trainingId, equipmentId, movimentId } = await createTraining(
+        app,
+        token,
+      );
+      const firstExerciseSetId = await createExerciseSet(
+        app,
+        token,
+        trainingId,
+        movimentId,
+        equipmentId,
+      );
+      const secondExerciseSetId = await createExerciseSet(
+        app,
+        token,
+        trainingId,
+        movimentId,
+        equipmentId,
+      );
+      const response = await request(app.getHttpServer())
+        .patch(
+          `/trainings/${trainingId}/exercise-set/${firstExerciseSetId}/order`,
+        )
+        .send({ order: 2 })
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+
+      expect(response.status).toBe(204);
+      const getByIdResponse = await request(app.getHttpServer())
+        .get(`/trainings/${trainingId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+      expect(getByIdResponse.status).toBe(200);
+      expect(getByIdResponse.body.exerciseSets[0].id).toBe(firstExerciseSetId);
+      expect(getByIdResponse.body.exerciseSets[0].order).toBe(2);
+      expect(getByIdResponse.body.exerciseSets[1].id).toBe(secondExerciseSetId);
+      expect(getByIdResponse.body.exerciseSets[1].order).toBe(1);
+    });
+  });
+
+  describe.only('/trainings/:id/exercise-set/:exerciseSetId (DELETE)', () => {
+    it('should delete exercise set', async () => {
+      const { trainingId, equipmentId, movimentId } = await createTraining(
+        app,
+        token,
+      );
+      const firstExerciseSetId = await createExerciseSet(
+        app,
+        token,
+        trainingId,
+        movimentId,
+        equipmentId,
+      );
+      const secondExerciseSetId = await createExerciseSet(
+        app,
+        token,
+        trainingId,
+        movimentId,
+        equipmentId,
+      );
+
+      const response = await request(app.getHttpServer())
+        .delete(`/trainings/${trainingId}/exercise-set/${firstExerciseSetId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+
+      expect(response.status).toBe(204);
+      const getByIdResponse = await request(app.getHttpServer())
+        .get(`/trainings/${trainingId}`)
+        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+      expect(getByIdResponse.status).toBe(200);
+      expect(getByIdResponse.body.exerciseSets).toHaveLength(1);
+      expect(getByIdResponse.body.exerciseSets[0].id).toBe(secondExerciseSetId);
+      expect(getByIdResponse.body.exerciseSets[0].order).toBe(1);
     });
   });
 });

@@ -13,6 +13,7 @@ class Exercise {
   @IsNotEmpty({ message: 'REQUIRED_MOVIMENT_ID' })
   @IsString({ message: 'INVALID_MOVIMENT_ID' })
   movimentId: string;
+  @IsOptional()
   @IsString({ each: true, message: 'INVALID_EQUIPMENT_ID' })
   equipmentIds?: Array<string>;
   @IsOptional()

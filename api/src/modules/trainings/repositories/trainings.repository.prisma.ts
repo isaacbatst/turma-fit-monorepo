@@ -29,6 +29,41 @@ export class TrainingsRepositoryPrisma
     },
   };
 
+  async updateExerciseSetOrders(training: Training): Promise<void> {
+    try {
+      await this.prisma.training.update({
+        where: { id: training.id },
+        data: {
+          exerciseSets: {
+            updateMany: training.getExerciseSets().map((exerciseSet) => ({
+              where: { id: exerciseSet.id },
+              data: {
+                order: exerciseSet.getOrder(),
+              },
+            })),
+          },
+        },
+      });
+    } catch (err) {
+      this.errorAdapter.adapt(err);
+    }
+  }
+
+  async removeExerciseSet(
+    training: Training,
+    exerciseSetId: string,
+  ): Promise<void> {
+    try {
+      await this.updateExerciseSetOrders(training);
+      await this.prisma.exerciseSet.delete({
+        where: { id: exerciseSetId },
+      });
+    } catch (err) {
+      console.log(err);
+      this.errorAdapter.adapt(err);
+    }
+  }
+
   async addExerciseSet(
     training: Training,
     exerciseSet: ExerciseSet,
@@ -40,6 +75,7 @@ export class TrainingsRepositoryPrisma
           repetitions: exerciseSet.repetitions,
           sets: exerciseSet.sets,
           restTime: exerciseSet.restTime,
+          order: exerciseSet.getOrder(),
           training: {
             connect: {
               id: training.id,
