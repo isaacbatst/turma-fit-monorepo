@@ -1,14 +1,13 @@
 import { PrismaClient } from '@prisma/client';
-import { EncrypterArgon2 } from '../src/modules/core/Encrypter/EncrypterArgon2';
+import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
-const encrypter = new EncrypterArgon2();
 
 async function main() {
   await prisma.admin.create({
     data: {
       email: 'admin@example.com',
-      password: await encrypter.encrypt('senha-FORTE@032'),
+      password: await argon2.hash('senha-FORTE@032'),
       name: 'admin',
     },
   });
