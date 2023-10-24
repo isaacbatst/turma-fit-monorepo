@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { validationPipeExceptionFactory } from './common/format-errors';
 async function bootstrap() {
+  console.log('Starting app env: ', process.env);
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
       origin: process.env.DASHBOARD_URL,
@@ -19,7 +20,6 @@ async function bootstrap() {
   );
   app.use(cookieParser());
   app.enableShutdownHooks();
-  console.log('Starting app env: ', process.env.NODE_ENV);
   await app.listen(5555);
 }
 
