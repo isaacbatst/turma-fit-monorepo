@@ -63,7 +63,6 @@ export class TrainingsController {
     @Param('id') id: string,
     @Param('exerciseSetId') exerciseSetId: string,
   ) {
-    console.log('trainingId', id);
     return this.trainingsService.removeExerciseSet(id, exerciseSetId);
   }
 }

@@ -84,9 +84,7 @@ export class AdminService {
   }
 
   async findMe(token: string) {
-    console.log('findMe token', token);
     const session = await this.adminSessionRepository.findByToken(token);
-    console.log('findMe session', session);
     if (!session) throw new NotFoundException('Session not found');
     const admin = await this.repository.findById(session.getUserId());
     if (!admin) throw new NotFoundException('Admin not found');
