@@ -1,12 +1,15 @@
+import { Serializable } from '../../../common/types/Serializable';
 import { OrderedList } from '../../core/ordered-list';
 import { ExerciseSet } from './exercise-set.entity';
+import { ExerciseSetSerialized } from './exercise-set.serialized';
 import { Exercise } from './exercise.entity';
+import { TrainingSerialized } from './training.serialized';
 
-export class Training {
-  private readonly exerciseSets = new OrderedList<ExerciseSet>(
-    [],
-    'EXERCISE_SET_NOT_FOUND',
-  );
+export class Training implements Serializable<TrainingSerialized> {
+  private readonly exerciseSets = new OrderedList<
+    ExerciseSet,
+    ExerciseSetSerialized
+  >([], 'EXERCISE_SET_NOT_FOUND');
 
   constructor(
     readonly id: string,
@@ -35,7 +38,7 @@ export class Training {
   }
 
   removeExerciseSet(setId: string) {
-    this.exerciseSets.remove(setId);
+    this.exerciseSets.delete(setId);
   }
 
   getExerciseSets() {
@@ -64,12 +67,10 @@ export class Training {
   toJSON() {
     return {
       id: this.id,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
       muscles: this.getMuscles().map((muscle) => muscle.toJSON()),
-      exerciseSets: this.exerciseSets
-        .getItems()
-        .map((exerciseSet) => exerciseSet.toJSON()),
+      exerciseSets: this.exerciseSets.toJSON(),
     };
   }
 }

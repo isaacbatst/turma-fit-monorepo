@@ -34,7 +34,7 @@ describe('Training', () => {
   it('should add sets', () => {
     const training = new Training('training-id');
     training.addExerciseSet('set-id', benchPressExercise, 3, 10);
-    training.addExerciseSet('set-id', barbellCurlExercise, 3, 10);
+    training.addExerciseSet('set-id-2', barbellCurlExercise, 3, 10);
 
     expect(training.getExerciseSets()).toHaveLength(2);
   });
@@ -42,7 +42,7 @@ describe('Training', () => {
   it('should get trained muscles', () => {
     const training = new Training('training-id');
     training.addExerciseSet('id', benchPressExercise, 3, 10);
-    training.addExerciseSet('id', barbellCurlExercise, 3, 10);
+    training.addExerciseSet('id-2', barbellCurlExercise, 3, 10);
 
     const muscles = training.getMuscles();
     expect(muscles).toHaveLength(2);

@@ -5,4 +5,7 @@ export class IdGeneratorFake implements IdGenerator {
   generate(): string {
     return this.id;
   }
+  setNextId(id: string) {
+    this.id = id;
+  }
 }

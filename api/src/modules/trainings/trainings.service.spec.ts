@@ -17,6 +17,7 @@ describe('TrainingsService', () => {
   let service: TrainingsService;
   let trainingRepository: TrainingsRepositoryMemory;
   let movimentRepository: MovimentRepositoryMemory;
+  let idGenerator: IdGeneratorFake;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -34,6 +35,7 @@ describe('TrainingsService', () => {
     movimentRepository =
       module.get<MovimentRepositoryMemory>(MOVIMENT_REPOSITORY);
     service = module.get<TrainingsService>(TrainingsService);
+    idGenerator = module.get<IdGeneratorFake>(ID_GENERATOR);
 
     const peitoral = new Muscle('peitoral', 'Peitoral');
     const supinoReto = new Moviment('supino-reto', 'Supino Reto', peitoral);
@@ -72,6 +74,7 @@ describe('TrainingsService', () => {
 
   it('should change exercise set order', async () => {
     const { id: trainingId } = await service.create();
+    idGenerator.setNextId('id-1');
     const { id: firstId } = await service.addExerciseSet(trainingId, {
       exercise: {
         movimentId: 'supino-reto',
@@ -80,6 +83,7 @@ describe('TrainingsService', () => {
       repetitions: 10,
       sets: 3,
     });
+    idGenerator.setNextId('id-2');
     const { id: secondId } = await service.addExerciseSet(trainingId, {
       exercise: {
         movimentId: 'crucifixo-reto',
@@ -96,6 +100,7 @@ describe('TrainingsService', () => {
 
   it('should remove exercise set', async () => {
     const { id: trainingId } = await service.create();
+    idGenerator.setNextId('id-1');
     const { id: firstId } = await service.addExerciseSet(trainingId, {
       exercise: {
         movimentId: 'supino-reto',
@@ -104,6 +109,7 @@ describe('TrainingsService', () => {
       repetitions: 10,
       sets: 3,
     });
+    idGenerator.setNextId('id-2');
     const { id: secondId } = await service.addExerciseSet(trainingId, {
       exercise: {
         movimentId: 'crucifixo-reto',

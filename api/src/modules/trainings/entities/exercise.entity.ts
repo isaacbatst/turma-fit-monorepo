@@ -1,8 +1,10 @@
+import { Serializable } from '../../../common/types/Serializable';
 import { Equipment } from '../../equipments/entities/equipment.entity';
 import { Moviment } from '../../moviments/entities/moviment.entity';
+import { ExerciseSerialized } from './exercise.serialized';
 import { Grip } from './grip.enum';
 
-export class Exercise {
+export class Exercise implements Serializable<ExerciseSerialized> {
   readonly equipments: Equipment[] = [];
 
   constructor(
@@ -27,6 +29,8 @@ export class Exercise {
 
   toJSON() {
     return {
+      id: this.id,
+      name: this.toString(),
       moviment: this.moviment.toJSON(),
       equipments: this.equipments.map((equipment) => equipment.toJSON()),
       grip: this.grip,

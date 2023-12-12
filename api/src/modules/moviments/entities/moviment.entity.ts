@@ -1,6 +1,8 @@
+import { Serializable } from '../../../common/types/Serializable';
 import { Muscle } from '../../muscles/entities/muscle.entity';
+import { MovimentSerialized } from './moviment.serialized';
 
-export class Moviment {
+export class Moviment implements Serializable<MovimentSerialized> {
   readonly id: string;
   readonly name: string;
   muscle: Muscle;

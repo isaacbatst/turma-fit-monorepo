@@ -1,8 +1,10 @@
 import { UnprocessableEntityException } from '@nestjs/common';
 import { Exercise } from './exercise.entity';
 import { gripToFriendlyName } from './grip.enum';
+import { Serializable } from '../../../common/types/Serializable';
+import { ExerciseSetSerialized } from './exercise-set.serialized';
 
-export class ExerciseSet {
+export class ExerciseSet implements Serializable<ExerciseSetSerialized> {
   readonly exercises: Exercise[] = [];
 
   constructor(
