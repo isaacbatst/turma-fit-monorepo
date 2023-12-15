@@ -7,6 +7,7 @@ import { OrderedList } from '../../core/ordered-list';
 import { Training } from './training.entity';
 import { TrainingSerialized } from './training.serialized';
 import { WeekPlanSerialized } from './week-plan.serialized';
+import { WeekPlanChange as WeekPlanChange } from './week-plan.change';
 
 export class WeekPlan {
   private trainings = new OrderedList<Training, TrainingSerialized>();
@@ -19,9 +20,10 @@ export class WeekPlan {
     ['F', 6],
     ['G', 7],
   ]);
+  readonly changes: WeekPlanChange[] = [];
 
   constructor(
-    private id: string,
+    readonly id: string,
     private createdAt = new Date(),
     private updatedAt = new Date(),
   ) {}
@@ -29,12 +31,23 @@ export class WeekPlan {
   addTraining(training: Training) {
     if (this.trainings.size >= 7) throw new ConflictException();
     this.trainings.add(training);
+    this.updatedAt = new Date();
+    this.changes.push({
+      type: 'add-training',
+      trainingId: training.id,
+    });
   }
 
   swapTrainings(day1: string, day2: string) {
     const order1 = this.getOrderByDay(day1);
     const order2 = this.getOrderByDay(day2);
     this.trainings.swap(order1, order2);
+    this.updatedAt = new Date();
+    this.changes.push({
+      type: 'swap-training',
+      day1,
+      day2,
+    });
   }
 
   removeTraining(day: string) {
@@ -42,6 +55,11 @@ export class WeekPlan {
     const training = this.trainings.getByOrder(order);
     if (!training) throw new NotFoundException();
     this.trainings.delete(training.id);
+    this.updatedAt = new Date();
+    this.changes.push({
+      type: 'remove-training',
+      trainingId: training.id,
+    });
   }
 
   getOrderByDay(day: string) {

@@ -1,12 +1,17 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Training } from './training.entity';
 import { WeekPlan } from './week-plan.entity';
+import {
+  WeekPlanChangeAddTraining,
+  WeekPlanChangeSwapTraining,
+} from './week-plan.change';
 
 describe('Week Plan', () => {
   it('should create an empty week plan', () => {
     const weekPlan = new WeekPlan('week-plan-id');
     expect(weekPlan).toBeTruthy();
     expect(weekPlan.getId()).toEqual('week-plan-id');
+    expect(weekPlan.changes).toHaveLength(0);
   });
 
   it('should add a training to the week plan', () => {
@@ -14,6 +19,10 @@ describe('Week Plan', () => {
     const training = new Training('a-training-id');
     weekPlan.addTraining(training);
     expect(weekPlan.getTrainingByDay('A')).toEqual(training);
+    expect(weekPlan.changes).toHaveLength(1);
+    expect(weekPlan.changes[0].type).toBe('add-training');
+    const change = weekPlan.changes[0] as WeekPlanChangeAddTraining;
+    expect(change.trainingId).toBe('a-training-id');
   });
 
   it('should remove a training from the week plan', () => {
@@ -23,6 +32,9 @@ describe('Week Plan', () => {
     expect(weekPlan.getTrainingByDay('A')).toEqual(training);
     weekPlan.removeTraining('A');
     expect(weekPlan.getTrainingByDay('A')).toBeUndefined();
+    expect(weekPlan.changes).toHaveLength(2);
+    expect(weekPlan.changes[0].type).toBe('add-training');
+    expect(weekPlan.changes[1].type).toBe('remove-training');
   });
 
   it('should throw an error when trying to remove a training that does not exist', () => {
@@ -61,6 +73,13 @@ describe('Week Plan', () => {
     weekPlan.swapTrainings('A', 'B');
     expect(weekPlan.getTrainingByDay('A')).toEqual(trainingB);
     expect(weekPlan.getTrainingByDay('B')).toEqual(trainingA);
+    expect(weekPlan.changes).toHaveLength(3);
+    expect(weekPlan.changes[0].type).toBe('add-training');
+    expect(weekPlan.changes[1].type).toBe('add-training');
+    expect(weekPlan.changes[2].type).toBe('swap-training');
+    const change = weekPlan.changes[2] as WeekPlanChangeSwapTraining;
+    expect(change.day1).toBe('A');
+    expect(change.day2).toBe('B');
   });
 
   it('should throw an error when trying to swap a training that does not exist', () => {
