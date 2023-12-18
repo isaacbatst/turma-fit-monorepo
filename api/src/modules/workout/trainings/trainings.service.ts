@@ -66,13 +66,13 @@ export class TrainingsService {
       input.exercise.grip,
     );
     const setId = this.idGenerator.generate();
-    const exerciseSet = training.addExerciseSet(
+    const [exerciseSet, order] = training.addExerciseSet(
       setId,
       exercise,
       input.sets,
       input.repetitions,
     );
-    await this.trainingRepository.addExerciseSet(training, exerciseSet);
+    await this.trainingRepository.addExerciseSet(training, exerciseSet, order);
 
     return {
       id: exerciseSet.id,

@@ -1,9 +1,9 @@
 import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
-import { AppModule } from '../../src/app.module';
-import { PRISMA_SERVICE } from '../../src/constants/tokens';
-import { validationPipeExceptionFactory } from '../../src/common/format-errors';
+import { AppModule } from '@/app.module';
+import { PRISMA_SERVICE } from '@/constants/tokens';
+import { validationPipeExceptionFactory } from '@/common/format-errors';
 
 export const createTestApp = async () => {
   const moduleFixture: TestingModule = await Test.createTestingModule({

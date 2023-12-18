@@ -36,9 +36,9 @@ export class TrainingsRepositoryPrisma
         data: {
           exerciseSets: {
             updateMany: training.getExerciseSets().map((exerciseSet) => ({
-              where: { id: exerciseSet.id },
+              where: { id: exerciseSet.data.id },
               data: {
-                order: exerciseSet.getOrder(),
+                order: exerciseSet.order,
               },
             })),
           },
@@ -59,7 +59,6 @@ export class TrainingsRepositoryPrisma
         where: { id: exerciseSetId },
       });
     } catch (err) {
-      console.log(err);
       this.errorAdapter.adapt(err);
     }
   }
@@ -67,6 +66,7 @@ export class TrainingsRepositoryPrisma
   async addExerciseSet(
     training: Training,
     exerciseSet: ExerciseSet,
+    order: number,
   ): Promise<void> {
     try {
       await this.prisma.exerciseSet.create({
@@ -75,7 +75,7 @@ export class TrainingsRepositoryPrisma
           repetitions: exerciseSet.repetitions,
           sets: exerciseSet.sets,
           restTime: exerciseSet.restTime,
-          order: exerciseSet.getOrder(),
+          order,
           training: {
             connect: {
               id: training.id,

@@ -94,8 +94,8 @@ describe('TrainingsService', () => {
     });
     await service.changeExerciseSetOrder(trainingId, firstId, 2);
     const training = trainingRepository.items[0];
-    expect(training.getExerciseByOrder(2)?.id).toBe(firstId);
-    expect(training.getExerciseByOrder(1)?.id).toBe(secondId);
+    expect(training.getExerciseSetByOrder(2)?.id).toBe(firstId);
+    expect(training.getExerciseSetByOrder(1)?.id).toBe(secondId);
   });
 
   it('should remove exercise set', async () => {
@@ -121,6 +121,6 @@ describe('TrainingsService', () => {
     await service.removeExerciseSet(trainingId, firstId);
     const training = trainingRepository.items[0];
     expect(training.getExerciseSets()).toHaveLength(1);
-    expect(training.getExerciseByOrder(1)?.id).toBe(secondId);
+    expect(training.getExerciseSetByOrder(1)?.id).toBe(secondId);
   });
 });

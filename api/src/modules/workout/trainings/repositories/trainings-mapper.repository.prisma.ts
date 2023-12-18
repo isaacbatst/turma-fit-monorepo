@@ -35,18 +35,19 @@ export class TrainingsMapperRepositoryPrisma {
       prismaTraining.updatedAt,
     );
 
-    prismaTraining.exerciseSets.forEach((prismaExerciseSet) => {
-      training.addExerciseSet(
-        prismaExerciseSet.id,
-        prismaExerciseSet.exercises.map((exercise) =>
-          this.mapExerciseToEntity(exercise),
-        ),
-        prismaExerciseSet.sets,
-        prismaExerciseSet.repetitions,
-        prismaExerciseSet.restTime ?? undefined,
-        prismaExerciseSet.order,
-      );
-    });
+    prismaTraining.exerciseSets
+      .sort((a, b) => a.order - b.order)
+      .forEach((prismaExerciseSet) => {
+        training.addExerciseSet(
+          prismaExerciseSet.id,
+          prismaExerciseSet.exercises.map((exercise) =>
+            this.mapExerciseToEntity(exercise),
+          ),
+          prismaExerciseSet.sets,
+          prismaExerciseSet.repetitions,
+          prismaExerciseSet.restTime ?? undefined,
+        );
+      });
 
     return training;
   }

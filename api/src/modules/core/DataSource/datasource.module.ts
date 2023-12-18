@@ -7,14 +7,16 @@ import {
   MUSCLE_REPOSITORY,
   PRISMA_SERVICE,
   TRAINING_REPOSITORY,
-} from '../../../constants/tokens';
-import { AdminRepositoryPrisma } from '../../admin/repositories/admin.repository.prisma';
-import { AdminSessionRepositoryPrisma } from '../../admin/repositories/admin.session.repository.prisma';
-import { EquipmentsRepositoryPrisma } from '../../equipments/repositories/equipments.repository.prisma';
-import { MovimentRepositoryPrisma } from '../../moviments/repositories/moviments.repository.prisma';
-import { MusclesRepositoryPrisma } from '../../muscles/repositories/mucles.repository.prisma';
-import { TrainingsRepositoryPrisma } from '../../trainings/repositories/trainings.repository.prisma';
+  WEEK_PLAN_REPOSITORY,
+} from '@/constants/tokens';
+import { AdminRepositoryPrisma } from '@/modules/admin/repositories/admin.repository.prisma';
+import { AdminSessionRepositoryPrisma } from '@/modules/admin/repositories/admin.session.repository.prisma';
+import { EquipmentsRepositoryPrisma } from '@/modules/workout/equipments/repositories/equipments.repository.prisma';
+import { MovimentRepositoryPrisma } from '@/modules/workout/moviments/repositories/moviments.repository.prisma';
+import { MusclesRepositoryPrisma } from '@/modules/workout/muscles/repositories/mucles.repository.prisma';
+import { TrainingsRepositoryPrisma } from '@/modules/workout/trainings/repositories/trainings.repository.prisma';
 import { PrismaService } from './prisma.service';
+import { WeekPlanRepositoryPrisma } from '@/modules/workout/week-plans/repositories/week-plan.repository.prisma';
 
 @Module({
   providers: [
@@ -46,6 +48,10 @@ import { PrismaService } from './prisma.service';
       provide: TRAINING_REPOSITORY,
       useClass: TrainingsRepositoryPrisma,
     },
+    {
+      provide: WEEK_PLAN_REPOSITORY,
+      useClass: WeekPlanRepositoryPrisma,
+    },
   ],
   exports: [
     PRISMA_SERVICE,
@@ -55,6 +61,7 @@ import { PrismaService } from './prisma.service';
     EQUIPMENT_REPOSITORY,
     MOVIMENT_REPOSITORY,
     TRAINING_REPOSITORY,
+    WEEK_PLAN_REPOSITORY,
   ],
 })
 export class DatasourceModule {}

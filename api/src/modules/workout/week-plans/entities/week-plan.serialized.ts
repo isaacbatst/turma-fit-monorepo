@@ -1,13 +1,13 @@
 import { OrderedListSerialized } from '../../../core/ordered-list.serialized';
-import { TrainingSerialized } from '../../trainings/entities/training.serialized';
+import { WeekPlanTrainingSerialized } from './week-plan-training.serialized';
 
 export type WeekPlanSerialized = {
   id: string;
   createdAt: string;
   updatedAt: string;
   trainings: OrderedListSerialized<
-    TrainingSerialized & {
-      letter: string;
+    WeekPlanTrainingSerialized & {
+      day: string;
     }
   >;
 };

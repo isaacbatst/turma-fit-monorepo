@@ -1,5 +1,3 @@
-import { UnknownObject } from './UnknownObject';
-
-export type Serializable<S extends UnknownObject> = {
+export type Serializable<S extends object> = {
   toJSON(): S;
 };

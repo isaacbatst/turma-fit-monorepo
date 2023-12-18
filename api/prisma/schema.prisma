@@ -58,10 +58,11 @@ model Moviment {
 }
 
 model Training {
-  id           String        @id @default(uuid())
-  exerciseSets ExerciseSet[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
+  id               String             @id @default(uuid())
+  exerciseSets     ExerciseSet[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now()) @updatedAt
+  weekPlanTrainings WeekPlanTraining[]
 }
 
 model ExerciseSet {
@@ -71,7 +72,7 @@ model ExerciseSet {
   exercises   Exercise[]
   sets        Int
   repetitions Int
-  order       Int @default(1)
+  order       Int        @default(1)
   restTime    Int?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @default(now()) @updatedAt
@@ -91,4 +92,23 @@ model Exercise {
   grip          Grip?
   exerciseSet   ExerciseSet @relation(fields: [exerciseSetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   exerciseSetId String
+}
+
+model WeekPlan {
+  id                String             @id @default(uuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now()) @updatedAt
+  weekPlanTrainings WeekPlanTraining[]
+}
+
+model WeekPlanTraining {
+  weekPlan   WeekPlan @relation(fields: [weekPlanId], references: [id])
+  weekPlanId String
+  training   Training @relation(fields: [trainingId], references: [id])
+  trainingId String
+  order      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@id([weekPlanId, trainingId])
 }

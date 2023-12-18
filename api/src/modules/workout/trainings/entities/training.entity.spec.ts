@@ -55,8 +55,8 @@ describe('Training', () => {
     training.addExerciseSet('bench-id', benchPressExercise, 3, 10);
     training.addExerciseSet('barbell-id', barbellCurlExercise, 3, 10);
 
-    expect(training.getExerciseByOrder(1)?.id).toBe('bench-id');
-    expect(training.getExerciseByOrder(2)?.id).toBe('barbell-id');
+    expect(training.getExerciseSetByOrder(1)?.id).toBe('bench-id');
+    expect(training.getExerciseSetByOrder(2)?.id).toBe('barbell-id');
   });
 
   it('should change exercise set order', () => {
@@ -66,9 +66,9 @@ describe('Training', () => {
     training.addExerciseSet('bar-id', barbellBarExercise, 3, 10);
 
     training.changeExerciseSetOrder('bench-id', 3);
-    expect(training.getExerciseByOrder(1)?.id).toBe('barbell-id');
-    expect(training.getExerciseByOrder(2)?.id).toBe('bar-id');
-    expect(training.getExerciseByOrder(3)?.id).toBe('bench-id');
+    expect(training.getExerciseSetByOrder(1)?.id).toBe('barbell-id');
+    expect(training.getExerciseSetByOrder(2)?.id).toBe('bar-id');
+    expect(training.getExerciseSetByOrder(3)?.id).toBe('bench-id');
   });
 
   it('should remove exercise set', () => {
@@ -78,7 +78,7 @@ describe('Training', () => {
     training.addExerciseSet('bar-id', barbellBarExercise, 3, 10);
     training.removeExerciseSet('barbell-id');
     expect(training.getExerciseSets()).toHaveLength(2);
-    expect(training.getExerciseByOrder(1)?.id).toBe('bench-id');
-    expect(training.getExerciseByOrder(2)?.id).toBe('bar-id');
+    expect(training.getExerciseSetByOrder(1)?.id).toBe('bench-id');
+    expect(training.getExerciseSetByOrder(2)?.id).toBe('bar-id');
   });
 });

@@ -54,15 +54,7 @@ export const createTraining = async (app: INestApplication, token: string) => {
   expect(createTrainingResponse.status).toBe(201);
   expect(createTrainingResponse.body.id).toBeDefined();
 
-  const muscleId = await createMuscle(app, token);
-  const movimentId = await createMoviment(app, token, muscleId);
-  const equipmentId = await createEquipment(app, token, 'Barra');
-
-  return {
-    trainingId: createTrainingResponse.body.id,
-    movimentId: movimentId,
-    equipmentId: equipmentId,
-  };
+  return createTrainingResponse.body.id as string;
 };
 
 export const createExerciseSet = async (
@@ -86,4 +78,15 @@ export const createExerciseSet = async (
   expect(response.status).toBe(201);
   expect(response.body.id).toBeDefined();
   return response.body.id;
+};
+
+export const createWeekPlan = async (app: INestApplication, token: string) => {
+  const createWeekPlanResponse = await request(app.getHttpServer())
+    .post('/week-plans')
+    .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+    .send();
+  expect(createWeekPlanResponse.status).toBe(201);
+  expect(createWeekPlanResponse.body.id).toBeDefined();
+
+  return createWeekPlanResponse.body.id as string;
 };

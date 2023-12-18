@@ -45,14 +45,20 @@ export class OrderedList<
   add(item: T, order?: number) {
     const nextOrder = order ?? this.getNextOrder();
     this.items.set(item.id, new OrderedListItem(nextOrder, item));
+    return nextOrder;
   }
 
   has(id: string) {
     return this.items.has(id);
   }
 
-  get(id: string): T | undefined {
-    return this.items.get(id)?.data;
+  get(id: string): { item: T; order: number } | undefined {
+    const item = this.items.get(id);
+    if (!item) return undefined;
+    return {
+      item: item.data,
+      order: item.getOrder(),
+    };
   }
 
   getByOrder(order: number): T | undefined {
@@ -65,8 +71,11 @@ export class OrderedList<
     return this.items.size + 1;
   }
 
-  getItems(): T[] {
-    return Array.from(this.items.values()).map((item) => item.data);
+  getItems(): { data: T; order: number }[] {
+    return Array.from(this.items.values()).map((item) => ({
+      data: item.data,
+      order: item.getOrder(),
+    }));
   }
 
   changeOrder(itemId: string, newOrder: number) {
@@ -105,8 +114,6 @@ export class OrderedList<
   }
 
   toJSON() {
-    return {
-      items: Array.from(this.items.values()).map((item) => item.toJSON()),
-    };
+    return Array.from(this.items.values()).map((item) => item.toJSON());
   }
 }

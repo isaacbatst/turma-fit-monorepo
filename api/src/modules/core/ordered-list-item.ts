@@ -44,7 +44,7 @@ export class OrderedListItem<
   toJSON() {
     return {
       order: this.order,
-      data: this.data.toJSON(),
+      ...this.data.toJSON(),
     };
   }
 }

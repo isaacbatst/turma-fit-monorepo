@@ -66,7 +66,7 @@ describe('Ordered List', () => {
     const orderedList = new OrderedList(items);
     orderedList.delete('2');
     expect(orderedList.getItemOrder('1')).toBe(1);
-    expect(orderedList.getItemOrder('2'));
+    expect(orderedList.getItemOrder('2')).toBeUndefined();
     expect(orderedList.getItemOrder('3')).toBe(2);
   });
 });

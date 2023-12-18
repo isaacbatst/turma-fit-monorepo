@@ -8,6 +8,7 @@ import { IdGenerator } from '../../core/IdGenerator/IdGenerator';
 import { WeekPlan } from './entities/week-plan.entity';
 import { TrainingsRepository } from '../trainings/repositories/trainings.repository';
 import { WeekPlanRepository } from './repositories/week-plan.repository';
+import { WeekPlanTraining } from './entities/week-plan-training.entity';
 
 type AddTrainingParams = {
   weekPlanId: string;
@@ -53,7 +54,7 @@ export class WeekPlansService {
     if (!training) {
       throw new NotFoundException('TRAINING_NOT_FOUND');
     }
-    weekPlan.addTraining(training);
+    weekPlan.addTraining(new WeekPlanTraining(training.id));
     await this.weekPlanRepository.update(weekPlan);
   }
 

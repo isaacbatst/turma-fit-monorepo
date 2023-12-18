@@ -6,6 +6,5 @@ export type ExerciseSetSerialized = {
   sets: number;
   repetitions: number;
   restTime?: number;
-  order: number;
   name: string;
 };

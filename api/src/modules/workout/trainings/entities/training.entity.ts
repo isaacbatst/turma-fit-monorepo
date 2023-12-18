@@ -23,18 +23,10 @@ export class Training implements Serializable<TrainingSerialized> {
     series: number,
     repetitions: number,
     restTime?: number,
-    order?: number,
-  ): ExerciseSet {
-    const set = new ExerciseSet(
-      setId,
-      exercise,
-      series,
-      repetitions,
-      restTime,
-      order ?? this.exerciseSets.getNextOrder(),
-    );
-    this.exerciseSets.add(set);
-    return set;
+  ): [ExerciseSet, number] {
+    const set = new ExerciseSet(setId, exercise, series, repetitions, restTime);
+    const nextOrder = this.exerciseSets.add(set);
+    return [set, nextOrder];
   }
 
   removeExerciseSet(setId: string) {
@@ -49,14 +41,18 @@ export class Training implements Serializable<TrainingSerialized> {
     this.exerciseSets.changeOrder(setId, newOrder);
   }
 
-  getExerciseByOrder(order: number): ExerciseSet | undefined {
+  getExerciseSetByOrder(order: number): ExerciseSet | undefined {
     return this.exerciseSets.getByOrder(order);
+  }
+
+  getExerciseSetOrder(setId: string) {
+    return this.exerciseSets.getItemOrder(setId);
   }
 
   getMuscles() {
     return this.exerciseSets
       .getItems()
-      .map((exerciseSet) => exerciseSet.getMuscles())
+      .map((exerciseSet) => exerciseSet.data.getMuscles())
       .flat()
       .filter(
         (muscle, index, muscles) =>

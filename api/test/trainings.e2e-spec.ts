@@ -5,7 +5,14 @@ import { createTestApp } from './utils/app';
 import { loginAdmin } from './utils/loginAdmin';
 import { resetDatabase } from './utils/resetDatabase';
 import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
-import { createExerciseSet, createTraining } from './utils/createTraining';
+import {
+  createEquipment,
+  createExerciseSet,
+  createMoviment,
+  createMuscle,
+  createTraining,
+} from './utils/createTraining';
+import { TrainingSerialized } from '../src/modules/workout/trainings/entities/training.serialized';
 
 describe('TrainingsController (e2e)', () => {
   let app: INestApplication;
@@ -105,10 +112,10 @@ describe('TrainingsController (e2e)', () => {
     });
 
     it('returns 201 with exercise created', async () => {
-      const { equipmentId, movimentId, trainingId } = await createTraining(
-        app,
-        token,
-      );
+      const equipmentId = await createEquipment(app, token, 'Barra');
+      const muscleId = await createMuscle(app, token);
+      const movimentId = await createMoviment(app, token, muscleId);
+      const trainingId = await createTraining(app, token);
       const response = await request(app.getHttpServer())
         .post(`/trainings/${trainingId}/exercise-set`)
         .send({
@@ -133,7 +140,7 @@ describe('TrainingsController (e2e)', () => {
 
   describe('/trainings (DELETE)', () => {
     it('should delete training', async () => {
-      const { trainingId } = await createTraining(app, token);
+      const trainingId = await createTraining(app, token);
       const response = await request(app.getHttpServer())
         .delete(`/trainings/${trainingId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
@@ -145,12 +152,12 @@ describe('TrainingsController (e2e)', () => {
     });
   });
 
-  describe('/trainings/:id/change-exercise-set-order (PATCH)', () => {
+  describe('/trainings/:id/exercise-set/order (PATCH)', () => {
     it('should change exercise set order', async () => {
-      const { trainingId, equipmentId, movimentId } = await createTraining(
-        app,
-        token,
-      );
+      const equipmentId = await createEquipment(app, token, 'Barra');
+      const muscleId = await createMuscle(app, token);
+      const movimentId = await createMoviment(app, token, muscleId);
+      const trainingId = await createTraining(app, token);
       const firstExerciseSetId = await createExerciseSet(
         app,
         token,
@@ -177,19 +184,24 @@ describe('TrainingsController (e2e)', () => {
         .get(`/trainings/${trainingId}`)
         .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
       expect(getByIdResponse.status).toBe(200);
-      expect(getByIdResponse.body.exerciseSets[0].id).toBe(firstExerciseSetId);
-      expect(getByIdResponse.body.exerciseSets[0].order).toBe(2);
-      expect(getByIdResponse.body.exerciseSets[1].id).toBe(secondExerciseSetId);
-      expect(getByIdResponse.body.exerciseSets[1].order).toBe(1);
+      const training = getByIdResponse.body as TrainingSerialized;
+      const firstExerciseSet = training.exerciseSets.find(
+        (exerciseSet) => exerciseSet.id === firstExerciseSetId,
+      );
+      expect(firstExerciseSet?.order).toBe(2);
+      const secondExerciseSet = training.exerciseSets.find(
+        (exerciseSet) => exerciseSet.id === secondExerciseSetId,
+      );
+      expect(secondExerciseSet?.order).toBe(1);
     });
   });
 
-  describe.only('/trainings/:id/exercise-set/:exerciseSetId (DELETE)', () => {
+  describe('/trainings/:id/exercise-set/:exerciseSetId (DELETE)', () => {
     it('should delete exercise set', async () => {
-      const { trainingId, equipmentId, movimentId } = await createTraining(
-        app,
-        token,
-      );
+      const equipmentId = await createEquipment(app, token, 'Barra');
+      const muscleId = await createMuscle(app, token);
+      const movimentId = await createMoviment(app, token, muscleId);
+      const trainingId = await createTraining(app, token);
       const firstExerciseSetId = await createExerciseSet(
         app,
         token,

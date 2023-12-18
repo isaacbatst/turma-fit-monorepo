@@ -1,10 +1,10 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { Training } from '../../trainings/entities/training.entity';
-import { WeekPlan } from './week-plan.entity';
+import { WeekPlanTraining } from './week-plan-training.entity';
 import {
   WeekPlanChangeAddTraining,
   WeekPlanChangeSwapTraining,
 } from './week-plan.change';
+import { WeekPlan } from './week-plan.entity';
 
 describe('Week Plan', () => {
   it('should create an empty week plan', () => {
@@ -16,7 +16,7 @@ describe('Week Plan', () => {
 
   it('should add a training to the week plan', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const training = new Training('a-training-id');
+    const training = new WeekPlanTraining('a-training-id');
     weekPlan.addTraining(training);
     expect(weekPlan.getTrainingByDay('A')).toEqual(training);
     expect(weekPlan.changes).toHaveLength(1);
@@ -25,9 +25,16 @@ describe('Week Plan', () => {
     expect(change.trainingId).toBe('a-training-id');
   });
 
+  it('should get training by id', () => {
+    const weekPlan = new WeekPlan('week-plan-id');
+    const training = new WeekPlanTraining('a-training-id');
+    weekPlan.addTraining(training);
+    expect(weekPlan.getTrainingById('a-training-id')?.item).toEqual(training);
+  });
+
   it('should remove a training from the week plan', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const training = new Training('a-training-id');
+    const training = new WeekPlanTraining('a-training-id');
     weekPlan.addTraining(training);
     expect(weekPlan.getTrainingByDay('A')).toEqual(training);
     weekPlan.removeTraining('A');
@@ -44,14 +51,14 @@ describe('Week Plan', () => {
 
   it('should throw try to add more than 7 trainings', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const trainingA = new Training('a-training-id');
-    const trainingB = new Training('b-training-id');
-    const trainingC = new Training('c-training-id');
-    const trainingD = new Training('d-training-id');
-    const trainingE = new Training('e-training-id');
-    const trainingF = new Training('f-training-id');
-    const trainingG = new Training('g-training-id');
-    const trainingH = new Training('h-training-id');
+    const trainingA = new WeekPlanTraining('a-training-id');
+    const trainingB = new WeekPlanTraining('b-training-id');
+    const trainingC = new WeekPlanTraining('c-training-id');
+    const trainingD = new WeekPlanTraining('d-training-id');
+    const trainingE = new WeekPlanTraining('e-training-id');
+    const trainingF = new WeekPlanTraining('f-training-id');
+    const trainingG = new WeekPlanTraining('g-training-id');
+    const trainingH = new WeekPlanTraining('h-training-id');
     weekPlan.addTraining(trainingA);
     weekPlan.addTraining(trainingB);
     weekPlan.addTraining(trainingC);
@@ -66,8 +73,8 @@ describe('Week Plan', () => {
 
   it('should swap two trainings', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const trainingA = new Training('a-training-id');
-    const trainingB = new Training('b-training-id');
+    const trainingA = new WeekPlanTraining('a-training-id');
+    const trainingB = new WeekPlanTraining('b-training-id');
     weekPlan.addTraining(trainingA);
     weekPlan.addTraining(trainingB);
     weekPlan.swapTrainings('A', 'B');
@@ -84,7 +91,7 @@ describe('Week Plan', () => {
 
   it('should throw an error when trying to swap a training that does not exist', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const trainingA = new Training('a-training-id');
+    const trainingA = new WeekPlanTraining('a-training-id');
     weekPlan.addTraining(trainingA);
     expect(() => weekPlan.swapTrainings('A', 'B')).toThrowError(
       NotFoundException,
@@ -93,9 +100,9 @@ describe('Week Plan', () => {
 
   it('should reorder trainings when a training is removed', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const trainingA = new Training('a-training-id');
-    const trainingB = new Training('b-training-id');
-    const trainingC = new Training('c-training-id');
+    const trainingA = new WeekPlanTraining('a-training-id');
+    const trainingB = new WeekPlanTraining('b-training-id');
+    const trainingC = new WeekPlanTraining('c-training-id');
     weekPlan.addTraining(trainingA);
     weekPlan.addTraining(trainingB);
     weekPlan.addTraining(trainingC);
@@ -112,16 +119,16 @@ describe('Week Plan', () => {
 
   it('should serialize week plan', () => {
     const weekPlan = new WeekPlan('week-plan-id');
-    const trainingA = new Training('a-training-id');
-    const trainingB = new Training('b-training-id');
+    const trainingA = new WeekPlanTraining('a-training-id');
+    const trainingB = new WeekPlanTraining('b-training-id');
     weekPlan.addTraining(trainingA);
     weekPlan.addTraining(trainingB);
     const serialized = weekPlan.toJSON();
     expect(serialized.id).toBe('week-plan-id');
-    expect(serialized.trainings.items).toHaveLength(2);
-    expect(serialized.trainings.items[0].data.id).toBe('a-training-id');
-    expect(serialized.trainings.items[0].data.letter).toBe('A');
-    expect(serialized.trainings.items[1].data.id).toBe('b-training-id');
-    expect(serialized.trainings.items[1].data.letter).toBe('B');
+    expect(serialized.trainings).toHaveLength(2);
+    expect(serialized.trainings[0].id).toBe('a-training-id');
+    expect(serialized.trainings[0].day).toBe('A');
+    expect(serialized.trainings[1].id).toBe('b-training-id');
+    expect(serialized.trainings[1].day).toBe('B');
   });
 });
