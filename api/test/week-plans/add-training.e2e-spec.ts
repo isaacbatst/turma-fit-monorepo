@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { PrismaService } from '../src/modules/core/DataSource/prisma.service';
-import { createTestApp } from './utils/app';
-import { loginAdmin } from './utils/loginAdmin';
-import { resetDatabase } from './utils/resetDatabase';
-import { DASHBOARD_AUTH_COOKIE } from '../src/constants/cookies';
-import { createTraining, createWeekPlan } from './utils/createTraining';
+import { DASHBOARD_AUTH_COOKIE } from '../../src/constants/cookies';
+import { PrismaService } from '../../src/modules/core/DataSource/prisma.service';
+import { createTestApp } from '../utils/app';
+import { createWeekPlan, createTraining } from '../utils/createTraining';
+import { loginAdmin } from '../utils/loginAdmin';
+import { resetDatabase } from '../utils/resetDatabase';
 
-describe('WeekPlanController (e2e)', () => {
+describe('WeekPlanController (e2e) - Add Training', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let token: string;
@@ -28,76 +28,6 @@ describe('WeekPlanController (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
-  });
-
-  describe('/week-plans (POST)', () => {
-    it('returns 401 without token', async () => {
-      const response = await request(app.getHttpServer()).post('/week-plans');
-
-      expect(response.status).toBe(401);
-      expect(response.body.message).toContain('MISSING_TOKEN');
-    });
-
-    it('returns 201', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/week-plans')
-        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-
-      expect(response.status).toBe(201);
-      expect(response.body.id).toBeDefined();
-    });
-  });
-
-  describe('/week-plans/ (GET)', () => {
-    it('returns 401 without token', async () => {
-      const response = await request(app.getHttpServer()).get('/week-plans');
-
-      expect(response.status).toBe(401);
-      expect(response.body.message).toContain('MISSING_TOKEN');
-    });
-
-    it('returns 200', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/week-plans')
-        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
-    });
-  });
-
-  describe('/week-plans/:id (GET)', () => {
-    it('returns 401 without token', async () => {
-      const response = await request(app.getHttpServer()).get(
-        '/week-plans/any-id',
-      );
-
-      expect(response.status).toBe(401);
-      expect(response.body.message).toContain('MISSING_TOKEN');
-    });
-
-    it('returns 404 with non-existing id', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/week-plans/any-id')
-        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-
-      expect(response.status).toBe(404);
-      expect(response.body.message).toContain('WEEK_PLAN_NOT_FOUND');
-    });
-
-    it('returns 200 with existing id', async () => {
-      const createResponse = await request(app.getHttpServer())
-        .post('/week-plans')
-        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-        .send();
-
-      const response = await request(app.getHttpServer())
-        .get(`/week-plans/${createResponse.body.id}`)
-        .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-
-      expect(response.status).toBe(200);
-      expect(response.body.id).toBe(createResponse.body.id);
-    });
   });
 
   describe('/week-plans/:id/trainings (POST)', () => {
