@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { WeekPlansService } from './week-plans.service';
 import { AddTrainingDto } from './dtos/add-training.dto';
+import { RemoveTrainingDto } from './dtos/remove-training.dto';
 
 @Controller('week-plans')
 export class WeekPlansController {
@@ -30,6 +39,18 @@ export class WeekPlansController {
   async addTraining(@Param('id') id: string, @Body() body: AddTrainingDto) {
     await this.weekPlansService.addTraining({
       trainingId: body.trainingId,
+      weekPlanId: id,
+    });
+  }
+
+  @HttpCode(204)
+  @Delete('/:id/trainings')
+  async removeTraining(
+    @Param('id') id: string,
+    @Body() body: RemoveTrainingDto,
+  ) {
+    await this.weekPlansService.removeTraining({
+      day: body.day,
       weekPlanId: id,
     });
   }

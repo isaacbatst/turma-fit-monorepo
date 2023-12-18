@@ -1,11 +1,19 @@
+import { WeekPlanTraining } from './week-plan-training.entity';
+
 export type WeekPlanChangeAddTraining = {
   type: 'add-training';
-  trainingId: string;
+  training: {
+    data: WeekPlanTraining;
+    order: number;
+  };
 };
 
 export type WeekPlanChangeRemoveTraining = {
   type: 'remove-training';
-  trainingId: string;
+  training: {
+    data: WeekPlanTraining;
+    order: number;
+  };
 };
 
 export type WeekPlanChangeSwapTraining = {

@@ -1,16 +1,23 @@
-import { NotFoundException } from '@nestjs/common';
-import { PrismaErrorAdapter } from '../../../../common/adapters/prisma-errors.adapter';
-import { RepositoryPrisma } from '../../../../common/repositories/repository.prisma';
-import { WeekPlan } from '../entities/week-plan.entity';
-import { WeekPlanTraining } from '../entities/week-plan-training.entity';
 import {
+  PrismaClient,
   WeekPlan as WeekPlanPrisma,
   WeekPlanTraining as WeekPlanTrainingPrisma,
 } from '@prisma/client';
+import { ITXClientDenyList } from '@prisma/client/runtime/library';
+import { PrismaErrorAdapter } from '../../../../common/adapters/prisma-errors.adapter';
+import { RepositoryPrisma } from '../../../../common/repositories/repository.prisma';
+import { WeekPlanTraining } from '../entities/week-plan-training.entity';
+import {
+  WeekPlanChangeAddTraining,
+  WeekPlanChangeRemoveTraining,
+} from '../entities/week-plan.change';
+import { WeekPlan } from '../entities/week-plan.entity';
 
 type WeekPlanPrismaComplete = WeekPlanPrisma & {
   weekPlanTrainings: WeekPlanTrainingPrisma[];
 };
+
+type PrismaTransaction = Omit<PrismaClient, ITXClientDenyList>;
 
 export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
   errorAdapter: PrismaErrorAdapter = new PrismaErrorAdapter('week_plan');
@@ -26,12 +33,8 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
             training.updatedAt,
           ),
       );
-    const plan = new WeekPlan(
-      data.id,
-      data.createdAt,
-      data.updatedAt,
-      trainings,
-    );
+    const plan = new WeekPlan(data.id, data.createdAt, data.updatedAt);
+    plan.restoreTrainings(trainings);
     return plan;
   }
 
@@ -53,6 +56,7 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
 
     return weekPlans.map(WeekPlanRepositoryPrisma.toEntity);
   }
+
   protected async unhandledFindById(id: string): Promise<WeekPlan | undefined> {
     const weekPlan = await this.prisma.weekPlan.findUnique({
       include: {
@@ -64,32 +68,60 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
     if (!weekPlan) return undefined;
     return WeekPlanRepositoryPrisma.toEntity(weekPlan);
   }
-  protected async unhandledUpdate(updated: WeekPlan): Promise<void> {
-    updated.changes.map(async (change) => {
-      if (change.type === 'add-training') {
-        const found = updated.getTrainingById(change.trainingId);
-        if (!found) throw new NotFoundException('TRAINING_NOT_FOUND');
-        const { item: training, order } = found;
-        await this.prisma.weekPlanTraining.create({
-          data: {
-            trainingId: change.trainingId,
-            weekPlanId: updated.getId(),
-            order,
-            createdAt: training.createdAt,
-            updatedAt: training.getUpdatedAt(),
-          },
-        });
-      }
-    });
 
-    await this.prisma.weekPlan.update({
-      where: { id: updated.getId() },
-      data: {
-        updatedAt: updated.getUpdatedAt(),
-      },
+  protected async unhandledUpdate(updated: WeekPlan): Promise<void> {
+    await this.prisma.$transaction(async (transaction) => {
+      const promises = updated.changes.map(async (change) => {
+        if (change.type === 'add-training') {
+          await this.addTraining(transaction, updated.id, change);
+        }
+
+        if (change.type === 'remove-training') {
+          await this.removeTraining(transaction, updated.id, change);
+        }
+      });
+      await Promise.all(promises);
+      await this.prisma.weekPlan.update({
+        where: { id: updated.getId() },
+        data: {
+          updatedAt: updated.getUpdatedAt(),
+        },
+      });
     });
   }
   protected async unhandledRemove(id: string): Promise<void> {
     await this.prisma.weekPlan.delete({ where: { id } });
+  }
+
+  private async addTraining(
+    transaction: PrismaTransaction,
+    weekPlanId: string,
+    change: WeekPlanChangeAddTraining,
+  ) {
+    await transaction.weekPlanTraining.create({
+      data: {
+        weekPlanId,
+        trainingId: change.training.data.id,
+        order: change.training.order,
+        createdAt: change.training.data.createdAt,
+        updatedAt: change.training.data.getUpdatedAt(),
+      },
+    });
+  }
+
+  private async removeTraining(
+    transaction: PrismaTransaction,
+    weekPlanId: string,
+    change: WeekPlanChangeRemoveTraining,
+  ) {
+    await transaction.weekPlanTraining.delete({
+      where: {
+        weekPlanId_trainingId_order: {
+          weekPlanId,
+          trainingId: change.training.data.id,
+          order: change.training.order,
+        },
+      },
+    });
   }
 }

@@ -29,19 +29,27 @@ export class WeekPlan {
     readonly id: string,
     private createdAt = new Date(),
     private updatedAt = new Date(),
-    trainings: WeekPlanTraining[] = [],
-  ) {
-    trainings.forEach((training) => this.addTraining(training));
+  ) {}
+
+  restoreTrainings(trainings: WeekPlanTraining[]) {
+    trainings.forEach((training) => {
+      this.validateTrainingsSize();
+      this.trainings.add(training);
+    });
   }
 
   addTraining(training: WeekPlanTraining) {
-    if (this.trainings.size >= 7) throw new ConflictException();
-    this.trainings.add(training);
+    this.validateTrainingsSize();
+    const order = this.trainings.add(training);
     this.updatedAt = new Date();
     this.changes.push({
       type: 'add-training',
-      trainingId: training.id,
+      training: {
+        data: training,
+        order,
+      },
     });
+    return order;
   }
 
   swapTrainings(day1: string, day2: string) {
@@ -59,12 +67,15 @@ export class WeekPlan {
   removeTraining(day: string) {
     const order = this.getOrderByDay(day);
     const training = this.trainings.getByOrder(order);
-    if (!training) throw new NotFoundException();
+    if (!training) throw new NotFoundException('TRAINING_NOT_FOUND');
     this.trainings.delete(training.id);
     this.updatedAt = new Date();
     this.changes.push({
       type: 'remove-training',
-      trainingId: training.id,
+      training: {
+        data: training,
+        order,
+      },
     });
   }
 
@@ -114,6 +125,16 @@ export class WeekPlan {
     );
     if (!day) throw new BadRequestException();
     return day[0];
+  }
+
+  private validateTrainingsSize() {
+    if (this.hasMaxTrainings()) {
+      throw new ConflictException('MAX_TRAININGS_REACHED');
+    }
+  }
+
+  private hasMaxTrainings() {
+    return this.trainings.size >= 7;
   }
 
   private trainingsToJSON() {

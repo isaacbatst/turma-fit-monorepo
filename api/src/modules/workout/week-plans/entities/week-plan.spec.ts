@@ -22,7 +22,7 @@ describe('Week Plan', () => {
     expect(weekPlan.changes).toHaveLength(1);
     expect(weekPlan.changes[0].type).toBe('add-training');
     const change = weekPlan.changes[0] as WeekPlanChangeAddTraining;
-    expect(change.trainingId).toBe('a-training-id');
+    expect(change.training.data.id).toBe('a-training-id');
   });
 
   it('should get training by id', () => {

@@ -49,7 +49,7 @@ export class AdminService {
 
   async findByEmail(email: string) {
     const admin = await this.repository.findByEmail(email);
-    if (!admin) throw new NotFoundException();
+    if (!admin) throw new NotFoundException('ADMIN_NOT_FOUND');
     return admin;
   }
 
@@ -78,7 +78,7 @@ export class AdminService {
 
   async logout(token: string) {
     const session = await this.adminSessionRepository.findByToken(token);
-    if (!session) throw new NotFoundException();
+    if (!session) throw new NotFoundException('SESSION_NOT_FOUND');
     session.logout(new Date());
     await this.adminSessionRepository.logout(session);
   }
@@ -99,7 +99,7 @@ export class AdminService {
     return `This action returns a #${id} admin`;
   }
 
-  update(id: number, updateAdminDto: UpdateAdminDto) {
+  update(id: number, _updateAdminDto: UpdateAdminDto) {
     return `This action updates a #${id} admin`;
   }
 
