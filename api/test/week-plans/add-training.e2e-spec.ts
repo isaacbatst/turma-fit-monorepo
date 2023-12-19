@@ -81,7 +81,7 @@ describe('WeekPlanController (e2e) - Add Training', () => {
         const weekPlanId = await createWeekPlan(app, token);
         const trainingId = await createTraining(app, token);
 
-        await request(app.getHttpServer())
+        const addTrainingResponse = await request(app.getHttpServer())
           .post(`/week-plans/${weekPlanId}/trainings`)
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
           .send({ trainingId });
@@ -90,7 +90,9 @@ describe('WeekPlanController (e2e) - Add Training', () => {
           .get(`/week-plans/${weekPlanId}`)
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
         expect(weekPlanResponse.body.trainings).toHaveLength(1);
-        expect(weekPlanResponse.body.trainings[0].id).toBe(trainingId);
+        expect(weekPlanResponse.body.trainings[0].id).toBe(
+          addTrainingResponse.body.id,
+        );
         expect(weekPlanResponse.body.trainings[0].day).toBe('A');
       });
     });

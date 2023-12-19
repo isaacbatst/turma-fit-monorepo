@@ -57,6 +57,9 @@ export class WeekPlansService {
     const id = this.idGenerator.generate();
     weekPlan.addTraining(new WeekPlanTraining(id, training.id));
     await this.weekPlanRepository.update(weekPlan);
+    return {
+      id,
+    };
   }
 
   async removeTraining({ weekPlanId, day }: RemoveTrainingParams) {

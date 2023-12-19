@@ -64,11 +64,12 @@ describe('WeekPlanController (e2e) - Remove Training', () => {
     describe('with existing week plan and training', () => {
       let deleteTrainingResponse: request.Response;
       let weekPlanId: string;
-      let secondTrainingId: string;
+      let secondWeekTrainingId: string;
+
       beforeEach(async () => {
         weekPlanId = await createWeekPlan(app, token);
         const firstTrainingId = await createTraining(app, token);
-        secondTrainingId = await createTraining(app, token);
+        const secondTrainingId = await createTraining(app, token);
 
         const addFirstTrainingResponse = await request(app.getHttpServer())
           .post(`/week-plans/${weekPlanId}/trainings`)
@@ -81,6 +82,8 @@ describe('WeekPlanController (e2e) - Remove Training', () => {
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
           .send({ trainingId: secondTrainingId });
         expect(addSecondTrainingResponse.status).toBe(201);
+        expect(addSecondTrainingResponse.body.id).toBeDefined();
+        secondWeekTrainingId = addSecondTrainingResponse.body.id;
 
         deleteTrainingResponse = await request(app.getHttpServer())
           .delete(`/week-plans/${weekPlanId}/trainings`)
@@ -103,8 +106,8 @@ describe('WeekPlanController (e2e) - Remove Training', () => {
         const weekPlanResponse = await request(app.getHttpServer())
           .get(`/week-plans/${weekPlanId}`)
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-        expect(weekPlanResponse.body.trainings[0].trainingId).toBe(
-          secondTrainingId,
+        expect(weekPlanResponse.body.trainings[0].id).toBe(
+          secondWeekTrainingId,
         );
         expect(weekPlanResponse.body.trainings[0].order).toBe(1);
       });

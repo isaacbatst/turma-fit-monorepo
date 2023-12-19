@@ -37,10 +37,14 @@ export class WeekPlansController {
 
   @Post('/:id/trainings')
   async addTraining(@Param('id') id: string, @Body() body: AddTrainingDto) {
-    await this.weekPlansService.addTraining({
+    const { id: weekPlanTrainingId } = await this.weekPlansService.addTraining({
       trainingId: body.trainingId,
       weekPlanId: id,
     });
+
+    return {
+      id: weekPlanTrainingId,
+    };
   }
 
   @HttpCode(204)
