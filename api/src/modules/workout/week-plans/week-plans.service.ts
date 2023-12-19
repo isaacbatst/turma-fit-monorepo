@@ -54,7 +54,8 @@ export class WeekPlansService {
     if (!training) {
       throw new NotFoundException('TRAINING_NOT_FOUND');
     }
-    weekPlan.addTraining(new WeekPlanTraining(training.id));
+    const id = this.idGenerator.generate();
+    weekPlan.addTraining(new WeekPlanTraining(id, training.id));
     await this.weekPlanRepository.update(weekPlan);
   }
 

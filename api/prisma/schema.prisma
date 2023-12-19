@@ -102,6 +102,7 @@ model WeekPlan {
 }
 
 model WeekPlanTraining {
+  id         String  @id @default(uuid())
   weekPlan   WeekPlan @relation(fields: [weekPlanId], references: [id])
   weekPlanId String
   training   Training @relation(fields: [trainingId], references: [id])
@@ -110,5 +111,5 @@ model WeekPlanTraining {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 
-  @@id([weekPlanId, trainingId, order])
+  @@unique([weekPlanId, trainingId, order])
 }

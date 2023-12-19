@@ -101,10 +101,12 @@ describe('WeekPlansService', () => {
       await trainingRepository.create(new Training('b-training-id'));
 
       const { id } = await service.create();
+      idGenerator.setNextId('a-week-training-id');
       await service.addTraining({
         trainingId: 'a-training-id',
         weekPlanId: id,
       });
+      idGenerator.setNextId('b-week-training-id');
       await service.addTraining({
         trainingId: 'b-training-id',
         weekPlanId: id,
@@ -115,8 +117,8 @@ describe('WeekPlansService', () => {
         day2: 'A',
       });
       const weekPlan = await weekPlanRepository.findById(id);
-      expect(weekPlan!.getTrainingByDay('A')!.id).toBe('b-training-id');
-      expect(weekPlan!.getTrainingByDay('B')!.id).toBe('a-training-id');
+      expect(weekPlan!.getTrainingByDay('A')!.id).toBe('b-week-training-id');
+      expect(weekPlan!.getTrainingByDay('B')!.id).toBe('a-week-training-id');
     });
   });
 

@@ -62,33 +62,51 @@ describe('WeekPlanController (e2e) - Remove Training', () => {
     });
 
     describe('with existing week plan and training', () => {
-      let response: request.Response;
+      let deleteTrainingResponse: request.Response;
       let weekPlanId: string;
+      let secondTrainingId: string;
       beforeEach(async () => {
         weekPlanId = await createWeekPlan(app, token);
-        const trainingId = await createTraining(app, token);
+        const firstTrainingId = await createTraining(app, token);
+        secondTrainingId = await createTraining(app, token);
 
-        const addTrainingResponse = await request(app.getHttpServer())
+        const addFirstTrainingResponse = await request(app.getHttpServer())
           .post(`/week-plans/${weekPlanId}/trainings`)
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
-          .send({ trainingId });
-        expect(addTrainingResponse.status).toBe(201);
+          .send({ trainingId: firstTrainingId });
+        expect(addFirstTrainingResponse.status).toBe(201);
 
-        response = await request(app.getHttpServer())
+        const addSecondTrainingResponse = await request(app.getHttpServer())
+          .post(`/week-plans/${weekPlanId}/trainings`)
+          .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
+          .send({ trainingId: secondTrainingId });
+        expect(addSecondTrainingResponse.status).toBe(201);
+
+        deleteTrainingResponse = await request(app.getHttpServer())
           .delete(`/week-plans/${weekPlanId}/trainings`)
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`)
           .send({ day: 'A' });
       });
 
       it('returns 204', async () => {
-        expect(response.status).toBe(204);
+        expect(deleteTrainingResponse.status).toBe(204);
       });
 
       it('removes the training from the week plan', async () => {
         const weekPlanResponse = await request(app.getHttpServer())
           .get(`/week-plans/${weekPlanId}`)
           .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
-        expect(weekPlanResponse.body.trainings).toHaveLength(0);
+        expect(weekPlanResponse.body.trainings).toHaveLength(1);
+      });
+
+      it('reorders the trainings', async () => {
+        const weekPlanResponse = await request(app.getHttpServer())
+          .get(`/week-plans/${weekPlanId}`)
+          .set('Cookie', `${DASHBOARD_AUTH_COOKIE}=${token}`);
+        expect(weekPlanResponse.body.trainings[0].trainingId).toBe(
+          secondTrainingId,
+        );
+        expect(weekPlanResponse.body.trainings[0].order).toBe(1);
       });
     });
   });

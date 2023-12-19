@@ -79,6 +79,10 @@ export class WeekPlan {
     });
   }
 
+  getTrainings() {
+    return this.trainings.getItems();
+  }
+
   getTrainingById(id: string) {
     return this.trainings.get(id);
   }

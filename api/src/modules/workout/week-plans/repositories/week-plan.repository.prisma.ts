@@ -28,6 +28,7 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
       .map(
         (training) =>
           new WeekPlanTraining(
+            training.id,
             training.trainingId,
             training.createdAt,
             training.updatedAt,
@@ -73,15 +74,15 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
     await this.prisma.$transaction(async (transaction) => {
       const promises = updated.changes.map(async (change) => {
         if (change.type === 'add-training') {
-          await this.addTraining(transaction, updated.id, change);
+          await this.addTraining(transaction, updated, change);
         }
 
         if (change.type === 'remove-training') {
-          await this.removeTraining(transaction, updated.id, change);
+          await this.removeTraining(transaction, updated, change);
         }
       });
       await Promise.all(promises);
-      await this.prisma.weekPlan.update({
+      await transaction.weekPlan.update({
         where: { id: updated.getId() },
         data: {
           updatedAt: updated.getUpdatedAt(),
@@ -95,13 +96,14 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
 
   private async addTraining(
     transaction: PrismaTransaction,
-    weekPlanId: string,
+    weekPlan: WeekPlan,
     change: WeekPlanChangeAddTraining,
   ) {
     await transaction.weekPlanTraining.create({
       data: {
-        weekPlanId,
-        trainingId: change.training.data.id,
+        weekPlanId: weekPlan.getId(),
+        trainingId: change.training.data.trainingId,
+        id: change.training.data.id,
         order: change.training.order,
         createdAt: change.training.data.createdAt,
         updatedAt: change.training.data.getUpdatedAt(),
@@ -111,15 +113,28 @@ export class WeekPlanRepositoryPrisma extends RepositoryPrisma<WeekPlan> {
 
   private async removeTraining(
     transaction: PrismaTransaction,
-    weekPlanId: string,
+    weekPlan: WeekPlan,
     change: WeekPlanChangeRemoveTraining,
   ) {
     await transaction.weekPlanTraining.delete({
       where: {
-        weekPlanId_trainingId_order: {
-          weekPlanId,
-          trainingId: change.training.data.id,
-          order: change.training.order,
+        id: change.training.data.id,
+      },
+    });
+
+    await transaction.weekPlan.update({
+      where: { id: weekPlan.getId() },
+      data: {
+        weekPlanTrainings: {
+          updateMany: weekPlan.getTrainings().map((training) => ({
+            data: {
+              order: training.order,
+              updatedAt: training.data.getUpdatedAt(),
+            },
+            where: {
+              id: training.data.id,
+            },
+          })),
         },
       },
     });
